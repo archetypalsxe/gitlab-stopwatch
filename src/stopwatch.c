@@ -1,29 +1,43 @@
 #include <stdio.h>
 #include <gtk/gtk.h>
 #include <glib.h>
+#include <time.h>
+#include <cairo.h>
 
-static void create_window (GtkWidget *widget, gpointer data) {
-	GtkWidget *newWindow;
+/* @TODO Global variables that should be moved */
+gboolean running = FALSE;
 
-	newWindow = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-	gtk_window_set_title (GTK_WINDOW (newWindow), "New Window");
-	gtk_widget_show_all (newWindow);
+
+static void startTimer (GtkWidget *widget, gpointer data) {
+	g_print ("Start timer\n");
 }
 
-static void button_two (GtkWidget *widget, gpointer data) {
-	g_print ("Button two\n");
+static void stopTimer (GtkWidget *widget, gpointer data) {
+	g_print ("Stop timer\n");
+}
+
+gchar getTime() {
+	time_t currentTime;
+	struct tm *localTime;
+	gchar buffer[256];
+
+	currentTime = time(NULL);
+	localTime = localtime(&currentTime);
+	strftime(buffer, 256, "%I:%M:%S%P", localTime);
+	return *buffer;
 }
 
 int main (int argc, char *argv[]) {
 	GtkWidget *window;
 	GtkWidget *grid;
-	GtkWidget *button;
+	GtkWidget *startButton;
+	GtkWidget *stopButton;
 	GtkWidget *windowTime;
 	GtkWidget *windowAction;
 	GtkWidget *windowElapsed;
-	GDate *date;
-	GTimeVal time;
-	gchar tmp_buffer[256];
+	gchar buffer[256];
+	time_t currentTime;
+	struct tm *localTime;
 
 	/* This is called in all GTK applications. Arguments are parsed
 	* from the command line and are returned to the application.
@@ -46,44 +60,36 @@ int main (int argc, char *argv[]) {
 	gtk_container_add (GTK_CONTAINER (window), grid);
 
 	//Time and date stuff
-	date = g_date_new();
-	g_get_current_time(&time);
-	g_date_set_time_val(date, &time);
-	g_date_strftime(tmp_buffer, 256, "%r", date);
-	g_print("Current date (heap):  %s\n", tmp_buffer);
+	currentTime = time(NULL);
+	localTime = localtime(&currentTime);
+	strftime(buffer, 256, "%I:%M:%S%P", localTime);
+
 
 	// Creating the text windows
-	windowTime = gtk_label_new("04:08:13PM");
-	windowAction = gtk_label_new("Started");
-	windowElapsed = gtk_label_new("04 hours 56 minutes");
+	*buffer = getTime();
+	windowTime = gtk_label_new(buffer);
+	windowAction = gtk_label_new("Program Started");
+	windowElapsed = gtk_label_new("--");
 
 	gtk_grid_attach(GTK_GRID(grid), windowTime, 0, 0, 1, 1);
 	gtk_grid_attach(GTK_GRID(grid), windowAction, 1, 0, 1, 1);
 	gtk_grid_attach(GTK_GRID(grid), windowElapsed, 2, 0, 1, 1);
-
-	button = gtk_button_new_with_label ("Create Window");
-	g_signal_connect (button, "clicked", G_CALLBACK (create_window), NULL);
 
 	/* Place the first button in the grid cell (0, 0), and make it fill
 	* just 1 cell horizontally and vertically (ie no spanning)
 	*/
 	//gtk_grid_attach (GTK_GRID (grid), button, 0, 0, 1, 1);
 
-	button = gtk_button_new_with_label ("Button 2");
-	g_signal_connect (button, "clicked", G_CALLBACK (button_two), NULL);
+	startButton = gtk_button_new_with_label ("Start");
+	stopButton = gtk_button_new_with_label ("Stop");
+	g_signal_connect (startButton, "clicked", G_CALLBACK (startTimer), NULL);
+	g_signal_connect (stopButton, "clicked", G_CALLBACK (stopTimer), NULL);
 
 	/* Place the second button in the grid cell (1, 0), and make it fill
 	* just 1 cell horizontally and vertically (ie no spanning)
 	*/
-	gtk_grid_attach (GTK_GRID (grid), button, 1, 1, 1, 1);
-
-	button = gtk_button_new_with_label ("Quit");
-	g_signal_connect (button, "clicked", G_CALLBACK (gtk_main_quit), NULL);
-
-	/* Place the Quit button in the grid cell (0, 1), and make it
-	* span 2 columns.
-	*/
-	gtk_grid_attach (GTK_GRID (grid), button, 1, 2, 1, 1);
+	gtk_grid_attach (GTK_GRID (grid), startButton, 0, 1, 1, 1);
+	gtk_grid_attach (GTK_GRID (grid), stopButton, 1, 1, 1, 1);
 
 	/* Now that we are done packing our widgets, we show them all
 	* in one go, by calling gtk_widget_show_all() on the window.
