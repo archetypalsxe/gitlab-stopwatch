@@ -3,28 +3,14 @@
 #include <glib.h>
 #include <time.h>
 #include <cairo.h>
+#include "Timer.h"
 
-/* @TODO Global variables that should be moved */
-gboolean running = FALSE;
-
-
-static void startTimer (GtkWidget *widget, gpointer data) {
+static void startTimerPressed (GtkWidget *widget, gpointer data) {
 	g_print ("Start timer\n");
 }
 
-static void stopTimer (GtkWidget *widget, gpointer data) {
+static void stopTimerPressed (GtkWidget *widget, gpointer data) {
 	g_print ("Stop timer\n");
-}
-
-gchar getTime() {
-	time_t currentTime;
-	struct tm *localTime;
-	gchar buffer[256];
-
-	currentTime = time(NULL);
-	localTime = localtime(&currentTime);
-	strftime(buffer, 256, "%I:%M:%S%P", localTime);
-	return *buffer;
 }
 
 int main (int argc, char *argv[]) {
@@ -35,9 +21,7 @@ int main (int argc, char *argv[]) {
 	GtkWidget *windowTime;
 	GtkWidget *windowAction;
 	GtkWidget *windowElapsed;
-	gchar buffer[256];
-	time_t currentTime;
-	struct tm *localTime;
+	struct Timer timer;
 
 	/* This is called in all GTK applications. Arguments are parsed
 	* from the command line and are returned to the application.
@@ -59,15 +43,9 @@ int main (int argc, char *argv[]) {
 	/* Pack the container in the window */
 	gtk_container_add (GTK_CONTAINER (window), grid);
 
-	//Time and date stuff
-	currentTime = time(NULL);
-	localTime = localtime(&currentTime);
-	strftime(buffer, 256, "%I:%M:%S%P", localTime);
-
-
-	// Creating the text windows
-	*buffer = getTime();
-	windowTime = gtk_label_new(buffer);
+	// Time stuff
+	initTimer(&timer);	
+	windowTime = gtk_label_new(getTime(&timer));
 	windowAction = gtk_label_new("Program Started");
 	windowElapsed = gtk_label_new("--");
 
@@ -82,8 +60,8 @@ int main (int argc, char *argv[]) {
 
 	startButton = gtk_button_new_with_label ("Start");
 	stopButton = gtk_button_new_with_label ("Stop");
-	g_signal_connect (startButton, "clicked", G_CALLBACK (startTimer), NULL);
-	g_signal_connect (stopButton, "clicked", G_CALLBACK (stopTimer), NULL);
+	g_signal_connect (startButton, "clicked", G_CALLBACK (startTimerPressed), NULL);
+	g_signal_connect (stopButton, "clicked", G_CALLBACK (stopTimerPressed), NULL);
 
 	/* Place the second button in the grid cell (1, 0), and make it fill
 	* just 1 cell horizontally and vertically (ie no spanning)
