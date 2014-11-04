@@ -2,6 +2,8 @@
 #define _timer_h
 
 #include <glib.h>
+#include <string.h>
+#include <stdio.h>
 
 typedef struct Timer {
 	gboolean running;

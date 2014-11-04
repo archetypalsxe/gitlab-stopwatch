@@ -5,6 +5,8 @@ void initTimer(TimerP timer) {
 }
 
 const gchar *getElapsedTime(TimerP timer) {
+	char returnString[256];
+
 	int elapsedTime = (int)difftime(timer->endTime, timer->startTime);
 	int numDays = elapsedTime / 60 / 60 / 24;
 	elapsedTime -= numDays * 60 * 60 * 24;
@@ -14,11 +16,40 @@ const gchar *getElapsedTime(TimerP timer) {
 	elapsedTime -= numMinutes * 60;
 	int numSeconds = elapsedTime;
 
+	if(numDays > 0) {
+		sprintf(returnString, "%d days", numDays);
+	}
+
+	if(numHours > 0) {
+		if(strnlen(returnString, sizeof(returnString)) > 0) {
+			sprintf(returnString, "%s %d hours", returnString, numHours);
+		} else {
+			sprintf(returnString, "%d hours", numHours);
+		}
+	}
+
+	if(numMinutes > 0) {
+		if(strnlen(returnString, sizeof(returnString)) > 0) {
+			sprintf(returnString, "%s %d minutes", returnString, numMinutes);
+		} else {
+			sprintf(returnString, "%d minutes", numMinutes);
+		}
+	}
+
+	if(numSeconds > 0) {
+		if(strnlen(returnString, sizeof(returnString)) > 0) {
+			sprintf(returnString, "%s %d seconds", returnString, numSeconds);
+		} else {
+			sprintf(returnString, "%d seconds", numSeconds);
+		}
+	}
+
 	g_print("\nDiff: %d\n", elapsedTime);
 	g_print("Num Days: %d\n", numDays);
 	g_print("Num Hours: %d\n", numHours);
 	g_print("Num Minutes: %d\n", numMinutes);
-	g_print("Num Seconds: %d\n\n", numSeconds);
+	g_print("Num Seconds: %d\n", numSeconds);
+	g_print("Return String: %s\n\n", returnString);
 	return "Yay\n";
 }
 
