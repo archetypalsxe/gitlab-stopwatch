@@ -5,12 +5,12 @@
 #include <cairo.h>
 #include "Timer.h"
 
-static void startTimerPressed (GtkWidget *widget, gpointer data) {
-	g_print ("Start timer\n");
+static void startTimerPressed (GtkWidget *widget, gpointer data, TimerP timer) {
+	startTimer(timer);
 }
 
-static void stopTimerPressed (GtkWidget *widget, gpointer data) {
-	g_print ("Stop timer\n");
+static void stopTimerPressed (GtkWidget *widget, gpointer data, TimerP timer) {
+	stopTimer(timer);
 }
 
 int main (int argc, char *argv[]) {
@@ -60,8 +60,8 @@ int main (int argc, char *argv[]) {
 
 	startButton = gtk_button_new_with_label ("Start");
 	stopButton = gtk_button_new_with_label ("Stop");
-	g_signal_connect (startButton, "clicked", G_CALLBACK (startTimerPressed), NULL);
-	g_signal_connect (stopButton, "clicked", G_CALLBACK (stopTimerPressed), NULL);
+	g_signal_connect (startButton, "clicked", G_CALLBACK (startTimerPressed), &timer);
+	g_signal_connect (stopButton, "clicked", G_CALLBACK (stopTimerPressed), &timer);
 
 	/* Place the second button in the grid cell (1, 0), and make it fill
 	* just 1 cell horizontally and vertically (ie no spanning)
