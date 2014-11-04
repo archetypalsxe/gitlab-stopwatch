@@ -6,6 +6,7 @@ void initTimer(TimerP timer) {
 
 const gchar *getElapsedTime(TimerP timer) {
 	char returnString[256];
+	const gchar *buffer[256];
 
 	int elapsedTime = (int)difftime(timer->endTime, timer->startTime);
 	int numDays = elapsedTime / 60 / 60 / 24;
@@ -49,8 +50,9 @@ const gchar *getElapsedTime(TimerP timer) {
 	g_print("Num Hours: %d\n", numHours);
 	g_print("Num Minutes: %d\n", numMinutes);
 	g_print("Num Seconds: %d\n", numSeconds);
-	g_print("Return String: %s\n\n", returnString);
-	return "Yay\n";
+	*buffer = returnString;
+	g_print("Return String: %s\n\n", *buffer);
+	return *buffer;
 }
 
 const gchar *getTime() {
