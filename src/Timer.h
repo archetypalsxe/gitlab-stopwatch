@@ -5,13 +5,17 @@
 
 typedef struct Timer {
 	gboolean running;
-	struct tm *startTime;
+	struct tm *startLocalTime;
+	struct tm *stopLocalTime;
+	time_t startTime;
+	time_t endTime;
 }*TimerP;
 
 void initTimer(TimerP);
 
+const gchar *getElapsedTime(TimerP);
 const gchar *getTime();
-void startTimer(TimerP);
-void stopTimer(TimerP);
+gboolean startTimer(TimerP);
+gboolean stopTimer(TimerP);
 
 #endif

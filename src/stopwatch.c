@@ -5,12 +5,39 @@
 #include <cairo.h>
 #include "Timer.h"
 
-static void startTimerPressed (GtkWidget *widget, gpointer data, TimerP timer) {
-	startTimer(timer);
+static void startTimerPressed (GtkWidget *widget, gpointer data, void *params[3]) {
+	TimerP timer = params[0];
+
+	gboolean success = startTimer(timer);
+	if(success) {
+		gchar buffer[256];
+		GtkWidget *windowTime;
+		GtkWidget *windowAction;
+		GtkWidget *windowElapsed;
+		GtkWidget *grid = params[1];
+		GtkWidget *window = params[2];
+
+		strftime(buffer, 256, "%I:%M:%S%P", timer->startLocalTime);
+		g_print("%s\n", buffer);
+		windowTime = gtk_label_new(buffer);
+		windowAction = gtk_label_new("Timer Started");
+		windowElapsed = gtk_label_new("--");
+		gtk_grid_insert_row(GTK_GRID(grid), 0);
+		gtk_grid_attach(GTK_GRID(grid), windowTime, 0, 0, 1, 1);
+		gtk_grid_attach(GTK_GRID(grid), windowAction, 1, 0, 1, 1);
+		gtk_grid_attach(GTK_GRID(grid), windowElapsed, 2, 0, 1, 1);
+		gtk_widget_show_all(window);
+	}
 }
 
-static void stopTimerPressed (GtkWidget *widget, gpointer data, TimerP timer) {
-	stopTimer(timer);
+static void stopTimerPressed (GtkWidget *widget, gpointer data, void *params[3]) {
+	TimerP timer = params[0];
+	GtkWidget *grid = params[1];
+
+	gboolean success = stopTimer(timer);
+	if(success) {
+		g_print(getElapsedTime(timer));
+	}
 }
 
 int main (int argc, char *argv[]) {
@@ -30,7 +57,7 @@ int main (int argc, char *argv[]) {
 
 	/* create a new window, and set its title */
 	window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-	gtk_window_set_default_size(GTK_WINDOW(window), 500, 500);
+	gtk_window_set_default_size(GTK_WINDOW(window), 0, 0);
 	gtk_window_set_title (GTK_WINDOW (window), "Stopwatch");
 	g_signal_connect (window, "destroy", G_CALLBACK (gtk_main_quit), NULL);
 	gtk_container_set_border_width (GTK_CONTAINER (window), 20);
@@ -48,7 +75,6 @@ int main (int argc, char *argv[]) {
 	windowTime = gtk_label_new(getTime(&timer));
 	windowAction = gtk_label_new("Program Started");
 	windowElapsed = gtk_label_new("--");
-
 	gtk_grid_attach(GTK_GRID(grid), windowTime, 0, 0, 1, 1);
 	gtk_grid_attach(GTK_GRID(grid), windowAction, 1, 0, 1, 1);
 	gtk_grid_attach(GTK_GRID(grid), windowElapsed, 2, 0, 1, 1);
@@ -60,8 +86,14 @@ int main (int argc, char *argv[]) {
 
 	startButton = gtk_button_new_with_label ("Start");
 	stopButton = gtk_button_new_with_label ("Stop");
-	g_signal_connect (startButton, "clicked", G_CALLBACK (startTimerPressed), &timer);
-	g_signal_connect (stopButton, "clicked", G_CALLBACK (stopTimerPressed), &timer);
+
+	void *data[3];
+	data[0] = &timer;
+	data[1] = grid;
+	data[2] = window;
+	g_signal_connect (startButton, "clicked", G_CALLBACK (startTimerPressed), data);
+	g_signal_connect (stopButton, "clicked", G_CALLBACK (stopTimerPressed), data);
+
 
 	/* Place the second button in the grid cell (1, 0), and make it fill
 	* just 1 cell horizontally and vertically (ie no spanning)
@@ -74,7 +106,8 @@ int main (int argc, char *argv[]) {
 	* This call recursively calls gtk_widget_show() on all widgets
 	* that are contained in the window, directly or indirectly.
 	*/
-	gtk_widget_show_all (window);
+	gtk_widget_show_all(window);
+
 
 	/* All GTK applications must have a gtk_main(). Control ends here
 	* and waits for an event to occur (like a key press or a mouse event),
