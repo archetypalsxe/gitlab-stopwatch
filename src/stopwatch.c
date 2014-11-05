@@ -18,7 +18,6 @@ static void startTimerPressed (GtkWidget *widget, gpointer data, void *params[3]
 		GtkWidget *window = params[2];
 
 		strftime(buffer, 256, "%I:%M:%S%P", timer->startLocalTime);
-		g_print("%s\n", buffer);
 		windowTime = gtk_label_new(buffer);
 		windowAction = gtk_label_new("Timer Started");
 		windowElapsed = gtk_label_new("--");
@@ -37,6 +36,22 @@ static void stopTimerPressed (GtkWidget *widget, gpointer data, void *params[3])
 	gboolean success = stopTimer(timer);
 	if(success) {
 		getElapsedTime(timer);
+		gchar buffer[256];
+		GtkWidget *windowTime;
+		GtkWidget *windowAction;
+		GtkWidget *windowElapsed;
+		GtkWidget *grid = params[1];
+		GtkWidget *window = params[2];
+
+		strftime(buffer, 256, "%I:%M:%S%P", timer->stopLocalTime);
+		windowTime = gtk_label_new(buffer);
+		windowAction = gtk_label_new("Timer Stopped");
+		windowElapsed = gtk_label_new(timer->elapsedTime);
+		gtk_grid_insert_row(GTK_GRID(grid), 0);
+		gtk_grid_attach(GTK_GRID(grid), windowTime, 0, 0, 1, 1);
+		gtk_grid_attach(GTK_GRID(grid), windowAction, 1, 0, 1, 1);
+		gtk_grid_attach(GTK_GRID(grid), windowElapsed, 2, 0, 1, 1);
+		gtk_widget_show_all(window);
 	}
 }
 

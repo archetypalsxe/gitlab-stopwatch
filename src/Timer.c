@@ -47,13 +47,6 @@ void getElapsedTime(TimerP timer) {
 	if(strnlen(timer->elapsedTime, sizeof(timer->elapsedTime)) == 0) {
 		sprintf(timer->elapsedTime, "%d seconds", 0);
 	}
-
-	g_print("\nDiff: %d\n", elapsedTime);
-	g_print("Num Days: %d\n", numDays);
-	g_print("Num Hours: %d\n", numHours);
-	g_print("Num Minutes: %d\n", numMinutes);
-	g_print("Num Seconds: %d\n", numSeconds);
-	g_print("Return String: %s\n\n", timer->elapsedTime);
 }
 
 const gchar *getTime() {
@@ -69,11 +62,9 @@ const gchar *getTime() {
 
 gboolean startTimer(TimerP timer) {
 	if(timer->running) {
-		g_print("Timer already running\n");
 		return FALSE;
 	} else {
 		timer->running = TRUE;
-		g_print("Starting timer\n");
 
 		timer->startTime = time(NULL);
 		timer->startLocalTime = localtime(&timer->startTime);
@@ -85,14 +76,12 @@ gboolean startTimer(TimerP timer) {
 gboolean stopTimer(TimerP timer) {
 	if(timer->running) {
 		timer->running = FALSE;
-		g_print ("Stopping timer\n");
 
 		timer->endTime = time(NULL);
 		timer->stopLocalTime = localtime(&timer->endTime);
 
 		return TRUE;
 	} else {
-		g_print("Timer not running\n");
 		return FALSE;
 	}
 }
