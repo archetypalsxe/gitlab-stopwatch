@@ -4,9 +4,8 @@ void initTimer(TimerP timer) {
 	timer->running = FALSE;
 }
 
-const gchar *getElapsedTime(TimerP timer) {
-	char returnString[256];
-	const gchar *buffer[256];
+void getElapsedTime(TimerP timer) {
+	sprintf(timer->elapsedTime, "");
 
 	int elapsedTime = (int)difftime(timer->endTime, timer->startTime);
 	int numDays = elapsedTime / 60 / 60 / 24;
@@ -18,31 +17,35 @@ const gchar *getElapsedTime(TimerP timer) {
 	int numSeconds = elapsedTime;
 
 	if(numDays > 0) {
-		sprintf(returnString, "%d days", numDays);
+		sprintf(timer->elapsedTime, "%d days", numDays);
 	}
 
 	if(numHours > 0) {
-		if(strnlen(returnString, sizeof(returnString)) > 0) {
-			sprintf(returnString, "%s %d hours", returnString, numHours);
+		if(strnlen(timer->elapsedTime, sizeof(timer->elapsedTime)) > 0) {
+			sprintf(timer->elapsedTime, "%s %d hours", timer->elapsedTime, numHours);
 		} else {
-			sprintf(returnString, "%d hours", numHours);
+			sprintf(timer->elapsedTime, "%d hours", numHours);
 		}
 	}
 
 	if(numMinutes > 0) {
-		if(strnlen(returnString, sizeof(returnString)) > 0) {
-			sprintf(returnString, "%s %d minutes", returnString, numMinutes);
+		if(strnlen(timer->elapsedTime, sizeof(timer->elapsedTime)) > 0) {
+			sprintf(timer->elapsedTime, "%s %d minutes", timer->elapsedTime, numMinutes);
 		} else {
-			sprintf(returnString, "%d minutes", numMinutes);
+			sprintf(timer->elapsedTime, "%d minutes", numMinutes);
 		}
 	}
 
 	if(numSeconds > 0) {
-		if(strnlen(returnString, sizeof(returnString)) > 0) {
-			sprintf(returnString, "%s %d seconds", returnString, numSeconds);
+		if(strnlen(timer->elapsedTime, sizeof(timer->elapsedTime)) > 0) {
+			sprintf(timer->elapsedTime, "%s %d seconds", timer->elapsedTime, numSeconds);
 		} else {
-			sprintf(returnString, "%d seconds", numSeconds);
+			sprintf(timer->elapsedTime, "%d seconds", numSeconds);
 		}
+	}
+
+	if(strnlen(timer->elapsedTime, sizeof(timer->elapsedTime)) == 0) {
+		sprintf(timer->elapsedTime, "%d seconds", 0);
 	}
 
 	g_print("\nDiff: %d\n", elapsedTime);
@@ -50,9 +53,7 @@ const gchar *getElapsedTime(TimerP timer) {
 	g_print("Num Hours: %d\n", numHours);
 	g_print("Num Minutes: %d\n", numMinutes);
 	g_print("Num Seconds: %d\n", numSeconds);
-	*buffer = returnString;
-	g_print("Return String: %s\n\n", *buffer);
-	return *buffer;
+	g_print("Return String: %s\n\n", timer->elapsedTime);
 }
 
 const gchar *getTime() {

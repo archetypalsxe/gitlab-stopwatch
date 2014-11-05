@@ -11,11 +11,12 @@ typedef struct Timer {
 	struct tm *stopLocalTime;
 	time_t startTime;
 	time_t endTime;
+	gchar elapsedTime[256];
 }*TimerP;
 
 void initTimer(TimerP);
 
-const gchar *getElapsedTime(TimerP);
+void getElapsedTime(TimerP);
 const gchar *getTime();
 gboolean startTimer(TimerP);
 gboolean stopTimer(TimerP);

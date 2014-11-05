@@ -36,8 +36,7 @@ static void stopTimerPressed (GtkWidget *widget, gpointer data, void *params[3])
 
 	gboolean success = stopTimer(timer);
 	if(success) {
-		const gchar *buffer = getElapsedTime(timer);
-		g_print(buffer);
+		getElapsedTime(timer);
 	}
 }
 
