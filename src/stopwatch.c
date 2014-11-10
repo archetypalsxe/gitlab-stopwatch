@@ -21,6 +21,7 @@ static void startTimerPressed (GtkWidget *widget, gpointer data, void *params[3]
 		windowTime = gtk_label_new(buffer);
 		windowAction = gtk_label_new("Timer Started");
 		windowElapsed = gtk_label_new("--");
+		gtk_grid_remove_row(GTK_GRID(grid), 3);
 		gtk_grid_insert_row(GTK_GRID(grid), 0);
 		gtk_grid_attach(GTK_GRID(grid), windowTime, 0, 0, 1, 1);
 		gtk_grid_attach(GTK_GRID(grid), windowAction, 1, 0, 1, 1);
@@ -47,6 +48,7 @@ static void stopTimerPressed (GtkWidget *widget, gpointer data, void *params[3])
 		windowTime = gtk_label_new(buffer);
 		windowAction = gtk_label_new("Timer Stopped");
 		windowElapsed = gtk_label_new(timer->elapsedTime);
+		gtk_grid_remove_row(GTK_GRID(grid), 3);
 		gtk_grid_insert_row(GTK_GRID(grid), 0);
 		gtk_grid_attach(GTK_GRID(grid), windowTime, 0, 0, 1, 1);
 		gtk_grid_attach(GTK_GRID(grid), windowAction, 1, 0, 1, 1);
@@ -69,10 +71,11 @@ int main (int argc, char *argv[]) {
 	* from the command line and are returned to the application.
 	*/
 	gtk_init (&argc, &argv);
+	initTimer(&timer);
 
 	/* create a new window, and set its title */
 	window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-	gtk_window_set_default_size(GTK_WINDOW(window), 0, 0);
+	gtk_window_set_default_size(GTK_WINDOW(window), 550, 200);
 	gtk_window_set_title (GTK_WINDOW (window), "Stopwatch");
 	g_signal_connect (window, "destroy", G_CALLBACK (gtk_main_quit), NULL);
 	gtk_container_set_border_width (GTK_CONTAINER (window), 20);
@@ -84,20 +87,6 @@ int main (int argc, char *argv[]) {
 
 	/* Pack the container in the window */
 	gtk_container_add (GTK_CONTAINER (window), grid);
-
-	// Time stuff
-	initTimer(&timer);	
-	windowTime = gtk_label_new(getTime(&timer));
-	windowAction = gtk_label_new("Program Started");
-	windowElapsed = gtk_label_new("--");
-	gtk_grid_attach(GTK_GRID(grid), windowTime, 0, 0, 1, 1);
-	gtk_grid_attach(GTK_GRID(grid), windowAction, 1, 0, 1, 1);
-	gtk_grid_attach(GTK_GRID(grid), windowElapsed, 2, 0, 1, 1);
-
-	/* Place the first button in the grid cell (0, 0), and make it fill
-	* just 1 cell horizontally and vertically (ie no spanning)
-	*/
-	//gtk_grid_attach (GTK_GRID (grid), button, 0, 0, 1, 1);
 
 	startButton = gtk_button_new_with_label ("Start");
 	stopButton = gtk_button_new_with_label ("Stop");
@@ -113,8 +102,8 @@ int main (int argc, char *argv[]) {
 	/* Place the second button in the grid cell (1, 0), and make it fill
 	* just 1 cell horizontally and vertically (ie no spanning)
 	*/
-	gtk_grid_attach (GTK_GRID (grid), startButton, 0, 1, 1, 1);
-	gtk_grid_attach (GTK_GRID (grid), stopButton, 1, 1, 1, 1);
+	gtk_grid_attach (GTK_GRID (grid), startButton, 0, 4, 1, 1);
+	gtk_grid_attach (GTK_GRID (grid), stopButton, 1, 4, 1, 1);
 
 	/* Now that we are done packing our widgets, we show them all
 	* in one go, by calling gtk_widget_show_all() on the window.
