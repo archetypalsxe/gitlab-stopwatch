@@ -5,6 +5,15 @@
 #include <cairo.h>
 #include "Timer.h"
 
+static void displayWorkingRequest () {
+	GtkWidget *newWindow;
+
+	newWindow = gtk_window_new (GTK_WINDOW_TOPLEVEL);
+	gtk_window_set_title (GTK_WINDOW (newWindow), "New Window");
+	gtk_widget_show_all (newWindow);
+}
+
+
 static void startTimerPressed (GtkWidget *widget, gpointer data, void *params[3]) {
 	TimerP timer = params[0];
 
@@ -27,6 +36,7 @@ static void startTimerPressed (GtkWidget *widget, gpointer data, void *params[3]
 		gtk_grid_attach(GTK_GRID(grid), windowAction, 1, 0, 1, 1);
 		gtk_grid_attach(GTK_GRID(grid), windowElapsed, 2, 0, 1, 1);
 		gtk_widget_show_all(window);
+		displayWorkingRequest();
 	}
 }
 
