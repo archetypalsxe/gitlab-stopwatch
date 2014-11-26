@@ -5,14 +5,34 @@
 #include <cairo.h>
 #include "Timer.h"
 
-static void displayWorkingRequest () {
+
+static void updateStartTime(gchar time[256], GtkWidget *grid, GtkWidget *window) {
+	GtkWidget *windowTime;
+	GtkWidget *windowAction;
+	GtkWidget *windowElapsed;
+
+	windowTime = gtk_label_new(time);
+	windowAction = gtk_label_new("Timer Started");
+	windowElapsed = gtk_label_new("User Typed");
+	gtk_grid_remove_row(GTK_GRID(grid), 0);
+	gtk_grid_insert_row(GTK_GRID(grid), 0);
+	gtk_grid_attach(GTK_GRID(grid), windowTime, 0, 0, 1, 1);
+	gtk_grid_attach(GTK_GRID(grid), windowAction, 1, 0, 1, 1);
+	gtk_grid_attach(GTK_GRID(grid), windowElapsed, 2, 0, 1, 1);
+
+	gtk_widget_show_all(window);
+}
+
+
+static void displayWorkingRequest (gchar time[256], GtkWidget *grid, GtkWidget *window) {
 	GtkWidget *newWindow;
 
 	newWindow = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-	gtk_window_set_title (GTK_WINDOW (newWindow), "New Window");
+	gtk_window_set_title (GTK_WINDOW (newWindow), "");
 	gtk_widget_show_all (newWindow);
-}
 
+	updateStartTime(time, grid, window);
+}
 
 static void startTimerPressed (GtkWidget *widget, gpointer data, void *params[3]) {
 	TimerP timer = params[0];
@@ -36,7 +56,7 @@ static void startTimerPressed (GtkWidget *widget, gpointer data, void *params[3]
 		gtk_grid_attach(GTK_GRID(grid), windowAction, 1, 0, 1, 1);
 		gtk_grid_attach(GTK_GRID(grid), windowElapsed, 2, 0, 1, 1);
 		gtk_widget_show_all(window);
-		displayWorkingRequest();
+		displayWorkingRequest(buffer, grid, window);
 	}
 }
 
