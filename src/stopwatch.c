@@ -26,9 +26,23 @@ static void updateStartTime(gchar time[256], GtkWidget *grid, GtkWidget *window)
 
 static void displayWorkingRequest (gchar time[256], GtkWidget *grid, GtkWidget *window) {
 	GtkWidget *newWindow;
+	GtkWidget *newGrid;
+	GtkWidget *textField;
 
 	newWindow = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-	gtk_window_set_title (GTK_WINDOW (newWindow), "");
+	gtk_window_set_title (GTK_WINDOW (newWindow), "What Are You Working On?");
+	gtk_window_set_default_size(GTK_WINDOW(newWindow), 500, 100);
+
+	newGrid = gtk_grid_new();
+	gtk_grid_set_column_spacing(GTK_GRID(newGrid), 20);
+	gtk_grid_set_row_spacing(GTK_GRID(newGrid), 10);
+
+	textField = gtk_text_view_new();
+	gtk_text_view_set_editable (GTK_TEXT_VIEW(textField), TRUE);
+//	gtk_text_view_im_context_filter_keypress(GTK_TEXT_VIEW(textField), 
+
+	gtk_container_add (GTK_CONTAINER (newWindow), newGrid);
+	gtk_grid_attach(GTK_GRID(newGrid), textField, 0, 0, 1, 1);
 	gtk_widget_show_all (newWindow);
 
 	updateStartTime(time, grid, window);
