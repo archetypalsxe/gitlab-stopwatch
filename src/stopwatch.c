@@ -6,14 +6,18 @@
 #include "Timer.h"
 
 
-static void updateStartTime(gchar time[256], GtkWidget *grid, GtkWidget *window) {
+static void updateStartTime(gchar time[256], GtkWidget *grid, GtkWidget *window, const gchar *text) {
 	GtkWidget *windowTime;
 	GtkWidget *windowAction;
 	GtkWidget *windowElapsed;
 
 	windowTime = gtk_label_new(time);
 	windowAction = gtk_label_new("Timer Started");
-	windowElapsed = gtk_label_new("User Typed");
+	strlen(text);
+	if(strlen(text) == 0) {
+		text = "Not Entered";
+	}
+	windowElapsed = gtk_label_new(text);
 	gtk_grid_remove_row(GTK_GRID(grid), 0);
 	gtk_grid_insert_row(GTK_GRID(grid), 0);
 	gtk_grid_attach(GTK_GRID(grid), windowTime, 0, 0, 1, 1);
@@ -52,8 +56,10 @@ static void displayWorkingRequest (gchar time[256], GtkWidget *grid, GtkWidget *
 	gtk_dialog_add_action_widget(GTK_DIALOG(dialog), textEntry, 1);
 
 	gtk_widget_show_all(dialog);
+	gtk_dialog_run(GTK_DIALOG(dialog));
 
-	updateStartTime(time, grid, window);
+	updateStartTime(time, grid, window, gtk_entry_get_text(GTK_ENTRY(textEntry)));
+	gtk_widget_destroy(dialog);
 }
 
 static void startTimerPressed (GtkWidget *widget, gpointer data, void *params[3]) {
