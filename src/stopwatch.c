@@ -23,27 +23,35 @@ static void updateStartTime(gchar time[256], GtkWidget *grid, GtkWidget *window)
 	gtk_widget_show_all(window);
 }
 
-
 static void displayWorkingRequest (gchar time[256], GtkWidget *grid, GtkWidget *window) {
-	GtkWidget *newWindow;
-	GtkWidget *newGrid;
-	GtkWidget *textField;
+	GtkWidget *dialog;
+	GtkWidget *textEntry;
+	GtkWidget *label;
 
-	newWindow = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-	gtk_window_set_title (GTK_WINDOW (newWindow), "What Are You Working On?");
-	gtk_window_set_default_size(GTK_WINDOW(newWindow), 500, 100);
+	label = gtk_label_new("What Are You Working On?");
 
-	newGrid = gtk_grid_new();
-	gtk_grid_set_column_spacing(GTK_GRID(newGrid), 20);
-	gtk_grid_set_row_spacing(GTK_GRID(newGrid), 10);
+	GtkDialogFlags flags = GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT;
+	dialog = gtk_dialog_new_with_buttons(
+		"Starting Timer",
+		GTK_WINDOW(window),
+		flags,
+		NULL
+	);
 
-	textField = gtk_text_view_new();
-	gtk_text_view_set_editable (GTK_TEXT_VIEW(textField), TRUE);
-//	gtk_text_view_im_context_filter_keypress(GTK_TEXT_VIEW(textField), 
+	textEntry = gtk_entry_new();
+	gtk_entry_set_activates_default(GTK_ENTRY(textEntry), TRUE);
+	gtk_dialog_set_default_response(GTK_DIALOG(dialog), GTK_RESPONSE_ACCEPT);
 
-	gtk_container_add (GTK_CONTAINER (newWindow), newGrid);
-	gtk_grid_attach(GTK_GRID(newGrid), textField, 0, 0, 1, 1);
-	gtk_widget_show_all (newWindow);
+	gtk_box_pack_start(
+		GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dialog))),
+		label,
+		FALSE,
+		FALSE,
+		0
+	);
+	gtk_dialog_add_action_widget(GTK_DIALOG(dialog), textEntry, 1);
+
+	gtk_widget_show_all(dialog);
 
 	updateStartTime(time, grid, window);
 }
