@@ -2,6 +2,7 @@ Alert when the stop watch is not running
 	g_timeout_add_seconds
 	http://zetcode.com/tutorials/gtktutorial/gtkevents/
 	g_timeout_add(1000, (GSourceFunc) time_handler, (gpointer) window);
+	g_source_remove()
 Lap/pause button
 Alerts when starting/stopping the timer and it's not running
 Resetting the Display

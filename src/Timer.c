@@ -2,6 +2,10 @@
 
 void initTimer(TimerP timer) {
 	timer->running = FALSE;
+	/* Set up notification for every 5 minutes (300000) */
+	void *data[1];
+	data[0] = timer;
+	timer->timeoutIdentifier = g_timeout_add(1000, (GSourceFunc)alertUser, data);
 }
 
 void getElapsedTime(TimerP timer) {
@@ -49,6 +53,20 @@ void getElapsedTime(TimerP timer) {
 	}
 }
 
+gboolean alertUser(gpointer data[1]) {
+	printf("In function\n");
+
+	TimerP timer = data[0];
+
+	printf("Line 61\n");
+	if(timer->running) {
+		printf("Returning False %d\n", timer->running);
+		return FALSE;
+	}
+	printf("Returning True\n");
+	return TRUE;
+}
+
 const gchar *getTime() {
 	time_t currentTime;
 	struct tm *localTime;
@@ -61,6 +79,7 @@ const gchar *getTime() {
 }
 
 gboolean startTimer(TimerP timer) {
+	printf("Starting timer %d\n", timer->running);
 	if(timer->running) {
 		return FALSE;
 	} else {
