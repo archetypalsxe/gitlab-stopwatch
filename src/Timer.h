@@ -5,6 +5,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <time.h>
+#include <libnotify/notify.h>
 
 typedef struct Timer {
 	gboolean running;
@@ -20,7 +21,7 @@ void initTimer(TimerP);
 
 void getElapsedTime(TimerP);
 const gchar *getTime();
-gboolean alertUser(gpointer[]);
+gboolean alertUser(TimerP);
 gboolean startTimer(TimerP);
 gboolean stopTimer(TimerP);
 
