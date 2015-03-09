@@ -3,7 +3,7 @@
 void initTimer(TimerP timer) {
 	timer->running = FALSE;
 	/* Set up notification for every 5 minutes (300000) */
-	timer->timeoutIdentifier = g_timeout_add(300000, (GSourceFunc)alertUser, timer);
+	timer->timeoutIdentifier = g_timeout_add(200000, (GSourceFunc)alertUser, timer);
 }
 
 void getElapsedTime(TimerP timer) {
@@ -99,7 +99,7 @@ gboolean stopTimer(TimerP timer) {
 		timer->stopLocalTime = localtime(&timer->endTime);
 
 		/* Set up notification for every 5 minutes (300000) */
-		timer->timeoutIdentifier = g_timeout_add(300000, (GSourceFunc)alertUser, timer);
+		timer->timeoutIdentifier = g_timeout_add(200000, (GSourceFunc)alertUser, timer);
 
 		return TRUE;
 	} else {
