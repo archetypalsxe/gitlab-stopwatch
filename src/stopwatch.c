@@ -24,7 +24,9 @@ static void updateStartTime(gchar time[256], GtkWidget *grid, GtkWidget *window,
 	gtk_grid_attach(GTK_GRID(grid), windowAction, 1, 0, 1, 1);
 	gtk_grid_attach(GTK_GRID(grid), windowElapsed, 2, 0, 1, 1);
 
-	gtk_widget_show_all(window);
+	gtk_widget_show(windowTime);
+	gtk_widget_show(windowAction);
+	gtk_widget_show(windowElapsed);
 }
 
 static void displayWorkingRequest (gchar time[256], GtkWidget *grid, GtkWidget *window) {
@@ -62,7 +64,7 @@ static void displayWorkingRequest (gchar time[256], GtkWidget *grid, GtkWidget *
 	gtk_widget_destroy(dialog);
 }
 
-static void startTimerPressed (GtkWidget *widget, gpointer data, void *params[3]) {
+static void startTimerPressed (GtkWidget *widget, gpointer data, void *params[5]) {
 	TimerP timer = params[0];
 
 	gboolean success = startTimer(timer);
@@ -73,6 +75,8 @@ static void startTimerPressed (GtkWidget *widget, gpointer data, void *params[3]
 		GtkWidget *windowElapsed;
 		GtkWidget *grid = params[1];
 		GtkWidget *window = params[2];
+		GtkWidget *startButton = params[3];
+		GtkWidget *stopButton = params[4];
 
 		strftime(buffer, 256, "%I:%M:%S%P", timer->startLocalTime);
 		windowTime = gtk_label_new(buffer);
@@ -83,7 +87,11 @@ static void startTimerPressed (GtkWidget *widget, gpointer data, void *params[3]
 		gtk_grid_attach(GTK_GRID(grid), windowTime, 0, 0, 1, 1);
 		gtk_grid_attach(GTK_GRID(grid), windowAction, 1, 0, 1, 1);
 		gtk_grid_attach(GTK_GRID(grid), windowElapsed, 2, 0, 1, 1);
-		gtk_widget_show_all(window);
+		gtk_widget_hide(startButton);
+		gtk_widget_show(stopButton);
+		gtk_widget_show(windowTime);
+		gtk_widget_show(windowAction);
+		gtk_widget_show(windowElapsed);
 		displayWorkingRequest(buffer, grid, window);
 	}
 }
@@ -101,6 +109,8 @@ static void stopTimerPressed (GtkWidget *widget, gpointer data, void *params[3])
 		GtkWidget *windowElapsed;
 		GtkWidget *grid = params[1];
 		GtkWidget *window = params[2];
+		GtkWidget *startButton = params[3];
+		GtkWidget *stopButton = params[4];
 
 		strftime(buffer, 256, "%I:%M:%S%P", timer->stopLocalTime);
 		windowTime = gtk_label_new(buffer);
@@ -111,7 +121,11 @@ static void stopTimerPressed (GtkWidget *widget, gpointer data, void *params[3])
 		gtk_grid_attach(GTK_GRID(grid), windowTime, 0, 0, 1, 1);
 		gtk_grid_attach(GTK_GRID(grid), windowAction, 1, 0, 1, 1);
 		gtk_grid_attach(GTK_GRID(grid), windowElapsed, 2, 0, 1, 1);
-		gtk_widget_show_all(window);
+		gtk_widget_hide(stopButton);
+		gtk_widget_show(startButton);
+		gtk_widget_show(windowTime);
+		gtk_widget_show(windowAction);
+		gtk_widget_show(windowElapsed);
 	}
 }
 
@@ -149,26 +163,20 @@ int main (int argc, char *argv[]) {
 	startButton = gtk_button_new_with_label ("Start");
 	stopButton = gtk_button_new_with_label ("Stop");
 
-	void *data[3];
+	void *data[5];
 	data[0] = &timer;
 	data[1] = grid;
 	data[2] = window;
+	data[3] = startButton;
+	data[4] = stopButton;
 	g_signal_connect (startButton, "clicked", G_CALLBACK (startTimerPressed), data);
 	g_signal_connect (stopButton, "clicked", G_CALLBACK (stopTimerPressed), data);
 
-
-	/* Place the second button in the grid cell (1, 0), and make it fill
-	* just 1 cell horizontally and vertically (ie no spanning)
-	*/
 	gtk_grid_attach (GTK_GRID (grid), startButton, 0, 4, 1, 1);
-	gtk_grid_attach (GTK_GRID (grid), stopButton, 1, 4, 1, 1);
+	gtk_grid_attach (GTK_GRID (grid), stopButton, 0, 4, 1, 1);
 
-	/* Now that we are done packing our widgets, we show them all
-	* in one go, by calling gtk_widget_show_all() on the window.
-	* This call recursively calls gtk_widget_show() on all widgets
-	* that are contained in the window, directly or indirectly.
-	*/
 	gtk_widget_show_all(window);
+	gtk_widget_hide(stopButton);
 
 
 	/* All GTK applications must have a gtk_main(). Control ends here
