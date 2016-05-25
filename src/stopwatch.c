@@ -134,8 +134,8 @@ debug(timer);
 }
 
 int main (int argc, char *argv[]) {
-printf("Major version: %d\n", gtk_get_major_version);
-printf("Minor version: %d\n", gtk_get_minor_version);
+printf("Major version: %u\n", gtk_get_major_version);
+printf("Minor version: %u\n", gtk_get_minor_version);
 	GtkWidget *window;
 	GtkWidget *grid;
 	GtkWidget *startButton;
@@ -180,8 +180,10 @@ debug(timerPointer);
     timerDataP->stopButton = stopButton;
 TimerP timer = timerDataP->timerPointer;
 debug(timer);
-//gpointer theGPointer;
-//startTimerPressed(startButton, theGPointer, timerDataP);
+/*
+gpointer theGPointer;
+startTimerPressed(startButton, theGPointer, timerDataP);
+*/
 	g_signal_connect (startButton, "clicked", G_CALLBACK (startTimerPressed), timerDataP);
 	g_signal_connect (stopButton, "clicked", G_CALLBACK (stopTimerPressed), timerDataP);
 
@@ -191,12 +193,20 @@ debug(timer);
 	gtk_widget_show_all(window);
 	gtk_widget_hide(stopButton);
 
+    /*
+gpointer theGPointer;
+startTimerPressed(startButton, theGPointer, timerDataP);
+*/
 
 	/* All GTK applications must have a gtk_main(). Control ends here
 	* and waits for an event to occur (like a key press or a mouse event),
 	* until gtk_main_quit() is called.
 	*/
 	gtk_main ();
+
+    /*
+startTimerPressed(startButton, theGPointer, timerDataP);
+*/
 
 	return 0;
 }
