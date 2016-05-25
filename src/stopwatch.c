@@ -134,6 +134,8 @@ debug(timer);
 }
 
 int main (int argc, char *argv[]) {
+printf("Major version: %d\n", gtk_get_major_version);
+printf("Minor version: %d\n", gtk_get_minor_version);
 	GtkWidget *window;
 	GtkWidget *grid;
 	GtkWidget *startButton;
