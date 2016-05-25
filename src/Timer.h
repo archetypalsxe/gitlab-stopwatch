@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <time.h>
 #include <libnotify/notify.h>
+#include <gtk/gtk.h>
 
 typedef struct Timer {
 	gboolean running;
@@ -16,6 +17,14 @@ typedef struct Timer {
 	gchar elapsedTime[256];
 	guint timeoutIdentifier;
 }*TimerP;
+
+typedef struct TimerData {
+    TimerP timerPointer;
+    GtkWidget *grid;
+    GtkWidget *window;
+    GtkWidget *startButton;
+    GtkWidget *stopButton;
+} *TimerDataP;
 
 void debug(TimerP);
 void initTimer(TimerP);

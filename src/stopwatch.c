@@ -65,8 +65,9 @@ static void displayWorkingRequest (gchar time[256], GtkWidget *grid, GtkWidget *
 	gtk_widget_destroy(dialog);
 }
 
-static void startTimerPressed (GtkWidget *widget, gpointer data, void *params[5]) {
-	TimerP timer = params[0];
+static void startTimerPressed (GtkWidget *widget, gpointer data, TimerDataP timerData) {
+
+    TimerP timer = timerData->timerPointer;
 
 debug(timer);
 	gboolean success = startTimer(timer);
@@ -75,10 +76,10 @@ debug(timer);
 		GtkWidget *windowTime;
 		GtkWidget *windowAction;
 		GtkWidget *windowElapsed;
-		GtkWidget *grid = params[1];
-		GtkWidget *window = params[2];
-		GtkWidget *startButton = params[3];
-		GtkWidget *stopButton = params[4];
+		GtkWidget *grid = timerData->grid;
+		GtkWidget *window = timerData->window;
+		GtkWidget *startButton = timerData->startButton;
+		GtkWidget *stopButton = timerData->stopButton;
 
 		strftime(buffer, 256, "%I:%M:%S%P", timer->startLocalTime);
 		windowTime = gtk_label_new(buffer);
@@ -168,14 +169,19 @@ debug(timerPointer);
 	startButton = gtk_button_new_with_label ("Start");
 	stopButton = gtk_button_new_with_label ("Stop");
 
-	void *data[5];
-	data[0] = timerPointer;
-	data[1] = grid;
-	data[2] = window;
-	data[3] = startButton;
-	data[4] = stopButton;
-	g_signal_connect (startButton, "clicked", G_CALLBACK (startTimerPressed), data);
-	g_signal_connect (stopButton, "clicked", G_CALLBACK (stopTimerPressed), data);
+    TimerDataP timerDataP;
+    timerDataP = malloc(sizeof(struct TimerData));
+    timerDataP->timerPointer = timerPointer;
+    timerDataP->grid = grid;
+    timerDataP->window = window;
+    timerDataP->startButton = startButton;
+    timerDataP->stopButton = stopButton;
+TimerP timer = timerDataP->timerPointer;
+debug(timer);
+//gpointer theGPointer;
+//startTimerPressed(startButton, theGPointer, timerDataP);
+	g_signal_connect (startButton, "clicked", G_CALLBACK (startTimerPressed), timerDataP);
+	g_signal_connect (stopButton, "clicked", G_CALLBACK (stopTimerPressed), timerDataP);
 
 	gtk_grid_attach (GTK_GRID (grid), startButton, 0, 4, 1, 1);
 	gtk_grid_attach (GTK_GRID (grid), stopButton, 0, 4, 1, 1);

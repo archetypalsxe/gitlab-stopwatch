@@ -3,6 +3,7 @@
 void debug(TimerP timer)
 {
     printf("***Debugging***\n");
+    printf("%p\n", timer);
     printf("Running: %d\n", timer->running);
 
     char buff[20];
