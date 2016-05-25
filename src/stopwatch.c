@@ -65,11 +65,10 @@ static void displayWorkingRequest (gchar time[256], GtkWidget *grid, GtkWidget *
 	gtk_widget_destroy(dialog);
 }
 
-static void startTimerPressed (GtkWidget *widget, gpointer data, TimerDataP timerData) {
+static void startTimerPressed (GtkWidget *widget, TimerDataP timerData) {
 
     TimerP timer = timerData->timerPointer;
 
-debug(timer);
 	gboolean success = startTimer(timer);
 	if(success) {
 		gchar buffer[256];
@@ -99,11 +98,9 @@ debug(timer);
 	}
 }
 
-static void stopTimerPressed (GtkWidget *widget, gpointer data, void *params[3]) {
-	TimerP timer = params[0];
-	GtkWidget *grid = params[1];
+static void stopTimerPressed (GtkWidget *widget, TimerDataP timerData) {
+	TimerP timer = timerData->timerPointer;
 
-debug(timer);
 	gboolean success = stopTimer(timer);
 	if(success) {
 		getElapsedTime(timer);
@@ -111,10 +108,10 @@ debug(timer);
 		GtkWidget *windowTime;
 		GtkWidget *windowAction;
 		GtkWidget *windowElapsed;
-		GtkWidget *grid = params[1];
-		GtkWidget *window = params[2];
-		GtkWidget *startButton = params[3];
-		GtkWidget *stopButton = params[4];
+		GtkWidget *grid = timerData->grid;
+		GtkWidget *window = timerData->window;
+		GtkWidget *startButton = timerData->startButton;
+		GtkWidget *stopButton = timerData->stopButton;
 
 		strftime(buffer, 256, "%I:%M:%S%P", timer->stopLocalTime);
 		windowTime = gtk_label_new(buffer);
@@ -134,8 +131,6 @@ debug(timer);
 }
 
 int main (int argc, char *argv[]) {
-printf("Major version: %u\n", gtk_get_major_version);
-printf("Minor version: %u\n", gtk_get_minor_version);
 	GtkWidget *window;
 	GtkWidget *grid;
 	GtkWidget *startButton;
@@ -151,7 +146,6 @@ printf("Minor version: %u\n", gtk_get_minor_version);
 	*/
 	gtk_init (&argc, &argv);
 	initTimer(timerPointer);
-debug(timerPointer);
 
 	/* create a new window, and set its title */
 	window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
@@ -178,12 +172,7 @@ debug(timerPointer);
     timerDataP->window = window;
     timerDataP->startButton = startButton;
     timerDataP->stopButton = stopButton;
-TimerP timer = timerDataP->timerPointer;
-debug(timer);
-/*
-gpointer theGPointer;
-startTimerPressed(startButton, theGPointer, timerDataP);
-*/
+
 	g_signal_connect (startButton, "clicked", G_CALLBACK (startTimerPressed), timerDataP);
 	g_signal_connect (stopButton, "clicked", G_CALLBACK (stopTimerPressed), timerDataP);
 
