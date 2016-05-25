@@ -13,7 +13,7 @@ typedef struct TimerData {
     TimerP timerPointer;
 } *TimerDataP;
 
-static void startTimerPressed (GtkWidget *widget, gpointer data, TimerDataP timerData) {
+static void startTimerPressed (GtkWidget *widget, TimerDataP timerData) {
     printf("TimerData Location: %p\n", timerData);
     TimerP timer = timerData->timerPointer;
 }
