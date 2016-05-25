@@ -17,6 +17,7 @@ typedef struct Timer {
 	guint timeoutIdentifier;
 }*TimerP;
 
+void debug(TimerP);
 void initTimer(TimerP);
 
 void getElapsedTime(TimerP);

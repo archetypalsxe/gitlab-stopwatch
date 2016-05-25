@@ -1,5 +1,19 @@
 #include "Timer.h"
 
+void debug(TimerP timer)
+{
+    printf("***Debugging***\n");
+    printf("Running: %d\n", timer->running);
+
+    char buff[20];
+    printf("Start Time: %s", ctime(&(timer->startTime)));
+    printf("End Time: %s", ctime(&(timer->endTime)));
+    printf("Elapsed Time: %s\n", timer->elapsedTime);
+    printf("Timeout Identifier: %d\n", timer->timeoutIdentifier);
+
+    printf("***End of Debugging***\n\n");
+}
+
 void initTimer(TimerP timer) {
 	timer->running = FALSE;
 	/* Set up notification for every 5 minutes (300000) */

@@ -4,6 +4,7 @@
 #include <time.h>
 #include <cairo.h>
 #include "Timer.h"
+#include <stdlib.h>
 
 
 static void updateStartTime(gchar time[256], GtkWidget *grid, GtkWidget *window, const gchar *text) {
@@ -67,6 +68,7 @@ static void displayWorkingRequest (gchar time[256], GtkWidget *grid, GtkWidget *
 static void startTimerPressed (GtkWidget *widget, gpointer data, void *params[5]) {
 	TimerP timer = params[0];
 
+debug(timer);
 	gboolean success = startTimer(timer);
 	if(success) {
 		gchar buffer[256];
@@ -100,6 +102,7 @@ static void stopTimerPressed (GtkWidget *widget, gpointer data, void *params[3])
 	TimerP timer = params[0];
 	GtkWidget *grid = params[1];
 
+debug(timer);
 	gboolean success = stopTimer(timer);
 	if(success) {
 		getElapsedTime(timer);
@@ -137,13 +140,15 @@ int main (int argc, char *argv[]) {
 	GtkWidget *windowTime;
 	GtkWidget *windowAction;
 	GtkWidget *windowElapsed;
-	struct Timer timer;
+    TimerP timerPointer;
+    timerPointer = malloc(sizeof(struct Timer));
 
 	/* This is called in all GTK applications. Arguments are parsed
 	* from the command line and are returned to the application.
 	*/
 	gtk_init (&argc, &argv);
-	initTimer(&timer);
+	initTimer(timerPointer);
+debug(timerPointer);
 
 	/* create a new window, and set its title */
 	window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
@@ -164,7 +169,7 @@ int main (int argc, char *argv[]) {
 	stopButton = gtk_button_new_with_label ("Stop");
 
 	void *data[5];
-	data[0] = &timer;
+	data[0] = timerPointer;
 	data[1] = grid;
 	data[2] = window;
 	data[3] = startButton;
