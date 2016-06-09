@@ -21,17 +21,27 @@ void initTimer(TimerP timer) {
 	timer->timeoutIdentifier = g_timeout_add(200000, (GSourceFunc)alertUser, timer);
 }
 
-void getElapsedTime(TimerP timer) {
-	sprintf(timer->elapsedTime, "");
+/**
+ * Get the time that has elapsed thus far
+ *
+ * @param TimerP timer
+ */
+void getCurrentTime(TimerP timer) {
+}
 
-	int elapsedTime = (int)difftime(timer->endTime, timer->startTime);
-	int numDays = elapsedTime / 60 / 60 / 24;
-	elapsedTime -= numDays * 60 * 60 * 24;
-	int numHours = elapsedTime / 60 / 60;
-	elapsedTime -= numHours * 60 * 60;
-	int numMinutes = elapsedTime / 60;
-	elapsedTime -= numMinutes * 60;
-	int numSeconds = elapsedTime;
+/**
+ * Convert a provided number of seconds into a user friendly display
+ *
+ * @param int seconds
+ */
+void setElapsedTime(int seconds, TimerP timer) {
+	int numDays = seconds / 60 / 60 / 24;
+	seconds -= numDays * 60 * 60 * 24;
+	int numHours = seconds / 60 / 60;
+	seconds -= numHours * 60 * 60;
+	int numMinutes = seconds / 60;
+	seconds -= numMinutes * 60;
+	int numSeconds = seconds;
 
 	if(numDays > 0) {
 		sprintf(timer->elapsedTime, "%d days", numDays);
@@ -64,6 +74,13 @@ void getElapsedTime(TimerP timer) {
 	if(strnlen(timer->elapsedTime, sizeof(timer->elapsedTime)) == 0) {
 		sprintf(timer->elapsedTime, "%d seconds", 0);
 	}
+}
+
+void getElapsedTime(TimerP timer) {
+	sprintf(timer->elapsedTime, "");
+
+	int elapsedTime = (int)difftime(timer->endTime, timer->startTime);
+	setElapsedTime(elapsedTime, timer);
 }
 
 gboolean alertUser(TimerP timer) {

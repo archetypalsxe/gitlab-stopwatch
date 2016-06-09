@@ -79,6 +79,7 @@ static void startTimerPressed (GtkWidget *widget, TimerDataP timerData) {
 		GtkWidget *window = timerData->window;
 		GtkWidget *startButton = timerData->startButton;
 		GtkWidget *stopButton = timerData->stopButton;
+		GtkWidget *lapButton = timerData->lapButton;
 
 		strftime(buffer, 256, "%I:%M:%S%P", timer->startLocalTime);
 		windowTime = gtk_label_new(buffer);
@@ -90,6 +91,7 @@ static void startTimerPressed (GtkWidget *widget, TimerDataP timerData) {
 		gtk_grid_attach(GTK_GRID(grid), windowAction, 1, 0, 1, 1);
 		gtk_grid_attach(GTK_GRID(grid), windowElapsed, 2, 0, 1, 1);
 		gtk_widget_hide(startButton);
+		gtk_widget_show(lapButton);
 		gtk_widget_show(stopButton);
 		gtk_widget_show(windowTime);
 		gtk_widget_show(windowAction);
@@ -112,6 +114,7 @@ static void stopTimerPressed (GtkWidget *widget, TimerDataP timerData) {
 		GtkWidget *window = timerData->window;
 		GtkWidget *startButton = timerData->startButton;
 		GtkWidget *stopButton = timerData->stopButton;
+		GtkWidget *lapButton = timerData->lapButton;
 
 		strftime(buffer, 256, "%I:%M:%S%P", timer->stopLocalTime);
 		windowTime = gtk_label_new(buffer);
@@ -123,6 +126,7 @@ static void stopTimerPressed (GtkWidget *widget, TimerDataP timerData) {
 		gtk_grid_attach(GTK_GRID(grid), windowAction, 1, 0, 1, 1);
 		gtk_grid_attach(GTK_GRID(grid), windowElapsed, 2, 0, 1, 1);
 		gtk_widget_hide(stopButton);
+		gtk_widget_hide(lapButton);
 		gtk_widget_show(startButton);
 		gtk_widget_show(windowTime);
 		gtk_widget_show(windowAction);
@@ -130,11 +134,22 @@ static void stopTimerPressed (GtkWidget *widget, TimerDataP timerData) {
 	}
 }
 
+/**
+ * The lap button has been pressed
+ *
+ * @param GtkWidget *widget
+ * @param TimerDataP timerData
+ */
+static void lapButtonPressed (GtkWidget *widget, TimerDataP timerData) {
+	TimerP timer = timerData->timerPointer;
+}
+
 int main (int argc, char *argv[]) {
 	GtkWidget *window;
 	GtkWidget *grid;
 	GtkWidget *startButton;
 	GtkWidget *stopButton;
+	GtkWidget *lapButton;
 	GtkWidget *windowTime;
 	GtkWidget *windowAction;
 	GtkWidget *windowElapsed;
@@ -164,6 +179,7 @@ int main (int argc, char *argv[]) {
 
 	startButton = gtk_button_new_with_label ("Start");
 	stopButton = gtk_button_new_with_label ("Stop");
+	lapButton = gtk_button_new_with_label ("Display Time");
 
     TimerDataP timerDataP;
     timerDataP = malloc(sizeof(struct TimerData));
@@ -172,30 +188,30 @@ int main (int argc, char *argv[]) {
     timerDataP->window = window;
     timerDataP->startButton = startButton;
     timerDataP->stopButton = stopButton;
+	timerDataP->lapButton = lapButton;
 
 	g_signal_connect (startButton, "clicked", G_CALLBACK (startTimerPressed), timerDataP);
 	g_signal_connect (stopButton, "clicked", G_CALLBACK (stopTimerPressed), timerDataP);
+	g_signal_connect (
+		lapButton,
+		"clicked",
+		G_CALLBACK(lapButtonPressed),
+		timerDataP
+	);
 
 	gtk_grid_attach (GTK_GRID (grid), startButton, 0, 4, 1, 1);
-	gtk_grid_attach (GTK_GRID (grid), stopButton, 0, 4, 1, 1);
+	gtk_grid_attach (GTK_GRID (grid), lapButton, 0, 4, 1, 1);
+	gtk_grid_attach (GTK_GRID (grid), stopButton, 1, 4, 1, 1);
 
 	gtk_widget_show_all(window);
 	gtk_widget_hide(stopButton);
-
-    /*
-gpointer theGPointer;
-startTimerPressed(startButton, theGPointer, timerDataP);
-*/
+	gtk_widget_hide(lapButton);
 
 	/* All GTK applications must have a gtk_main(). Control ends here
 	* and waits for an event to occur (like a key press or a mouse event),
 	* until gtk_main_quit() is called.
 	*/
 	gtk_main ();
-
-    /*
-startTimerPressed(startButton, theGPointer, timerDataP);
-*/
 
 	return 0;
 }
