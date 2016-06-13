@@ -83,6 +83,12 @@ void getElapsedTime(TimerP timer) {
 	setElapsedTime(elapsedTime, timer);
 }
 
+void loadCurrentTime(TimerP timer) {
+    sprintf(timer->elapsedTime, "");
+    int elapsedTime = (int)difftime(time(NULL), timer->startTime);
+    setElapsedTime(elapsedTime, timer);
+}
+
 gboolean alertUser(TimerP timer) {
 	if(timer->running) {
 		return FALSE;

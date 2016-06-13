@@ -31,6 +31,7 @@ void debug(TimerP);
 void initTimer(TimerP);
 
 void setElapsedTime(int, TimerP);
+void loadCurrentTime(TimerP);
 void getElapsedTime(TimerP);
 const gchar *getTime();
 gboolean alertUser(TimerP);

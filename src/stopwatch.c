@@ -140,8 +140,12 @@ static void stopTimerPressed (GtkWidget *widget, TimerDataP timerData) {
  * @param GtkWidget *widget
  * @param TimerDataP timerData
  */
-static void lapButtonPressed (GtkWidget *widget, TimerDataP timerData) {
-	TimerP timer = timerData->timerPointer;
+static void lapButtonPressed (GtkWidget *widget, TimerDataP timerData)
+{
+    TimerP timer = timerData->timerPointer;
+    loadCurrentTime(timer);
+    gchar buffer[256];
+    strftime(buffer, 256, "%I:%M:%S%P", timer->stopLocalTime);
 }
 
 int main (int argc, char *argv[]) {
