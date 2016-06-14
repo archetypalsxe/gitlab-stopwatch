@@ -7,7 +7,13 @@
 #include <stdlib.h>
 
 
-static void updateStartTime(gchar time[256], GtkWidget *grid, GtkWidget *window, const gchar *text) {
+static void updateStartTime(
+    gchar time[256],
+    GtkWidget *grid,
+    GtkWidget *window,
+    const gchar *text,
+    TimerDataP timerData
+) {
 	GtkWidget *windowTime;
 	GtkWidget *windowAction;
 	GtkWidget *windowElapsed;
@@ -15,9 +21,10 @@ static void updateStartTime(gchar time[256], GtkWidget *grid, GtkWidget *window,
 	windowTime = gtk_label_new(time);
 	windowAction = gtk_label_new("Timer Started");
 	strlen(text);
-	if(strlen(text) == 0) {
-		text = "Not Entered";
-	}
+
+    TimerP timer = timerData->timerPointer;
+    sprintf(timer->subject, "%s", text);
+
 	windowElapsed = gtk_label_new(text);
 	gtk_grid_remove_row(GTK_GRID(grid), 0);
 	gtk_grid_insert_row(GTK_GRID(grid), 0);
@@ -30,7 +37,12 @@ static void updateStartTime(gchar time[256], GtkWidget *grid, GtkWidget *window,
 	gtk_widget_show(windowElapsed);
 }
 
-static void displayWorkingRequest (gchar time[256], GtkWidget *grid, GtkWidget *window) {
+static void displayWorkingRequest (
+    gchar time[256],
+    GtkWidget *grid,
+    GtkWidget *window,
+    TimerDataP timerData
+) {
 	GtkWidget *dialog;
 	GtkWidget *textEntry;
 	GtkWidget *label;
@@ -61,7 +73,13 @@ static void displayWorkingRequest (gchar time[256], GtkWidget *grid, GtkWidget *
 	gtk_widget_show_all(dialog);
 	gtk_dialog_run(GTK_DIALOG(dialog));
 
-	updateStartTime(time, grid, window, gtk_entry_get_text(GTK_ENTRY(textEntry)));
+	updateStartTime(
+        time,
+        grid,
+        window,
+        gtk_entry_get_text(GTK_ENTRY(textEntry)),
+        timerData
+    );
 	gtk_widget_destroy(dialog);
 }
 
@@ -96,7 +114,7 @@ static void startTimerPressed (GtkWidget *widget, TimerDataP timerData) {
 		gtk_widget_show(windowTime);
 		gtk_widget_show(windowAction);
 		gtk_widget_show(windowElapsed);
-		displayWorkingRequest(buffer, grid, window);
+		displayWorkingRequest(buffer, grid, window, timerData);
 	}
 }
 
@@ -118,7 +136,11 @@ static void stopTimerPressed (GtkWidget *widget, TimerDataP timerData) {
 
 		strftime(buffer, 256, "%I:%M:%S%P", timer->stopLocalTime);
 		windowTime = gtk_label_new(buffer);
-		windowAction = gtk_label_new("Timer Stopped");
+
+        gchar actionString[256];
+        sprintf(actionString, "Timer Stopped (%s)", timer->subject);
+        windowAction = gtk_label_new(actionString);
+
 		windowElapsed = gtk_label_new(timer->elapsedTime);
 		gtk_grid_remove_row(GTK_GRID(grid), 3);
 		gtk_grid_insert_row(GTK_GRID(grid), 0);
@@ -142,10 +164,36 @@ static void stopTimerPressed (GtkWidget *widget, TimerDataP timerData) {
  */
 static void lapButtonPressed (GtkWidget *widget, TimerDataP timerData)
 {
+    gchar eventTimeString[256];
+    gchar *currentElapsed;
+    time_t currentTime;
+
     TimerP timer = timerData->timerPointer;
-    loadCurrentTime(timer);
-    gchar buffer[256];
-    strftime(buffer, 256, "%I:%M:%S%P", timer->stopLocalTime);
+    currentElapsed = getCurrentTime(timer);
+
+    GtkWidget *windowTime;
+    GtkWidget *windowAction;
+    GtkWidget *windowElapsed;
+    GtkWidget *grid = timerData->grid;
+    GtkWidget *window = timerData->window;
+
+    currentTime = time(NULL);
+    strftime(eventTimeString, 256, "%I:%M:%S%P", localtime(&currentTime));
+    windowTime = gtk_label_new(eventTimeString);
+
+    gchar actionString[256];
+    sprintf(actionString, "Displaying Time (%s)", timer->subject);
+    windowAction = gtk_label_new(actionString);
+
+    windowElapsed = gtk_label_new(currentElapsed);
+    gtk_grid_remove_row(GTK_GRID(grid), 3);
+    gtk_grid_insert_row(GTK_GRID(grid), 0);
+    gtk_grid_attach(GTK_GRID(grid), windowTime, 0, 0, 1, 1);
+    gtk_grid_attach(GTK_GRID(grid), windowAction, 1, 0, 1, 1);
+    gtk_grid_attach(GTK_GRID(grid), windowElapsed, 2, 0, 1, 1);
+    gtk_widget_show(windowTime);
+    gtk_widget_show(windowAction);
+    gtk_widget_show(windowElapsed);
 }
 
 int main (int argc, char *argv[]) {

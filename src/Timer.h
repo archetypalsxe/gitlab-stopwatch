@@ -15,6 +15,7 @@ typedef struct Timer {
 	time_t startTime;
 	time_t endTime;
 	gchar elapsedTime[256];
+    gchar subject[256];
 	guint timeoutIdentifier;
 }*TimerP;
 
@@ -30,6 +31,7 @@ typedef struct TimerData {
 void debug(TimerP);
 void initTimer(TimerP);
 
+gchar *getCurrentTime(TimerP);
 void setElapsedTime(int, TimerP);
 void loadCurrentTime(TimerP);
 void getElapsedTime(TimerP);

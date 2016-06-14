@@ -25,8 +25,11 @@ void initTimer(TimerP timer) {
  * Get the time that has elapsed thus far
  *
  * @param TimerP timer
+ * @return gchar
  */
-void getCurrentTime(TimerP timer) {
+gchar * getCurrentTime(TimerP timer) {
+    loadCurrentTime(timer);
+    return timer->elapsedTime;
 }
 
 /**
