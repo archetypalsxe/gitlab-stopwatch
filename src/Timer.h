@@ -10,6 +10,7 @@
 
 typedef struct Timer {
 	gboolean running;
+    gboolean paused;
 	struct tm *startLocalTime;
 	struct tm *stopLocalTime;
 	time_t startTime;
@@ -17,6 +18,7 @@ typedef struct Timer {
 	gchar elapsedTime[256];
     gchar subject[256];
 	guint timeoutIdentifier;
+    int elapsedSeconds;
 }*TimerP;
 
 typedef struct TimerData {
@@ -26,10 +28,13 @@ typedef struct TimerData {
     GtkWidget *startButton;
     GtkWidget *stopButton;
 	GtkWidget *lapButton;
+    GtkWidget *pauseButton;
 } *TimerDataP;
 
 void debug(TimerP);
 void initTimer(TimerP);
+void pauseTimer(TimerP);
+void resumeTimer(TimerP);
 
 gchar *getCurrentTime(TimerP);
 void setElapsedTime(int, TimerP);
