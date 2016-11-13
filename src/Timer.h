@@ -33,7 +33,7 @@ typedef struct TimerData {
     GtkWidget *window;
     GtkWidget *startButton;
     GtkWidget *stopButton;
-	GtkWidget *lapButton;
+    GtkWidget *lapButton;
     GtkWidget *pauseButton;
 } *TimerDataP;
 
