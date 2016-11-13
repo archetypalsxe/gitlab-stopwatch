@@ -6,6 +6,8 @@
 #include "Timer.h"
 #include <stdlib.h>
 
+#define WINDOW_WIDTH 550
+#define WINDOW_HEIGHT 200
 
 static void updateStartTime(
     gchar time[256],
@@ -275,6 +277,22 @@ static void pauseButtonPressed (GtkWidget *widget, TimerDataP timerData)
     }
 }
 
+/**
+ * Create and setup the main window object
+ */
+GtkWidget* createWindow() {
+    GtkWidget* window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
+    gtk_window_set_default_size(
+        GTK_WINDOW(window),
+        WINDOW_WIDTH,
+        WINDOW_HEIGHT
+    );
+    gtk_window_set_title (GTK_WINDOW (window), "Stopwatch");
+    g_signal_connect (window, "destroy", G_CALLBACK (gtk_main_quit), NULL);
+    gtk_container_set_border_width (GTK_CONTAINER (window), 20);
+    return window;
+}
+
 int main (int argc, char *argv[]) {
 	GtkWidget *window;
 	GtkWidget *grid;
@@ -294,12 +312,7 @@ int main (int argc, char *argv[]) {
 	gtk_init (&argc, &argv);
 	initTimer(timerPointer);
 
-	/* create a new window, and set its title */
-	window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-	gtk_window_set_default_size(GTK_WINDOW(window), 550, 200);
-	gtk_window_set_title (GTK_WINDOW (window), "Stopwatch");
-	g_signal_connect (window, "destroy", G_CALLBACK (gtk_main_quit), NULL);
-	gtk_container_set_border_width (GTK_CONTAINER (window), 20);
+    window = createWindow();
 
 	/* Here we construct the container that is going pack our buttons */
 	grid = gtk_grid_new();

@@ -9,18 +9,24 @@
 #include <gtk/gtk.h>
 
 typedef struct Timer {
-	gboolean running;
+    gboolean running;
     gboolean paused;
-	struct tm *startLocalTime;
-	struct tm *stopLocalTime;
-	time_t startTime;
-	time_t endTime;
-	gchar elapsedTime[256];
+    struct tm *startLocalTime;
+    struct tm *stopLocalTime;
+    time_t startTime;
+    time_t endTime;
+    gchar elapsedTime[256];
     gchar subject[256];
-	guint timeoutIdentifier;
+    // Used for notifying user that we are not running
+    guint timeoutIdentifier;
     int elapsedSeconds;
 }*TimerP;
 
+/**
+ * @TODO Could this struct be combined with Timer, is there a need for 2
+ * separate structs? Believe that the intention may have been that the Timer
+ * struct is for "private" variables
+ */
 typedef struct TimerData {
     TimerP timerPointer;
     GtkWidget *grid;

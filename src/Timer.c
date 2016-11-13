@@ -17,10 +17,20 @@ void debug(TimerP timer)
     printf("***End of Debugging***\n\n");
 }
 
+/**
+ * Initial setup of the timer (constructor). Sets that we are not running
+ * and also sets a notification
+ */
 void initTimer(TimerP timer) {
-	timer->running = FALSE;
-	/* Set up notification for every 5 minutes (300000) */
-	timer->timeoutIdentifier = g_timeout_add(200000, (GSourceFunc)alertUser, timer);
+    timer->running = FALSE;
+    /**
+     * Set up notifications. 5 Minutes is 300000
+     */
+    timer->timeoutIdentifier = g_timeout_add(
+        200000,
+        (GSourceFunc)alertUser,
+        timer
+    );
     timer->elapsedSeconds = 0;
 }
 
