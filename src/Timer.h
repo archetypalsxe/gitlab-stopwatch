@@ -38,9 +38,12 @@ typedef struct TimerData {
 } *TimerDataP;
 
 void debug(TimerP);
+void displayWorkingRequest(gchar[256], GtkWidget*, GtkWidget*, TimerDataP);
 void initTimer(TimerP);
 void pauseTimer(TimerP);
 void resumeTimer(TimerP);
+void startTimerPressed(GtkWidget*, TimerDataP);
+void updateStartTime(char[256], GtkWidget*, GtkWidget*, const gchar*, TimerDataP);
 
 gchar *getCurrentTime(TimerP);
 void setElapsedTime(int, TimerP);

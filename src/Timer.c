@@ -17,6 +17,52 @@ void debug(TimerP timer)
     printf("***End of Debugging***\n\n");
 }
 
+void displayWorkingRequest (
+    gchar time[256],
+    GtkWidget *grid,
+    GtkWidget *window,
+    TimerDataP timerData
+) {
+    GtkWidget *dialog;
+    GtkWidget *textEntry;
+    GtkWidget *label;
+
+    label = gtk_label_new("What Are You Working On?");
+
+    GtkDialogFlags flags = GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT;
+    dialog = gtk_dialog_new_with_buttons(
+        "Starting Timer",
+        GTK_WINDOW(window),
+        flags,
+        NULL
+    );
+
+    textEntry = gtk_entry_new();
+    gtk_entry_set_activates_default(GTK_ENTRY(textEntry), TRUE);
+    gtk_dialog_set_default_response(GTK_DIALOG(dialog), GTK_RESPONSE_ACCEPT);
+
+    gtk_box_pack_start(
+        GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dialog))),
+        label,
+        FALSE,
+        FALSE,
+        0
+    );
+    gtk_dialog_add_action_widget(GTK_DIALOG(dialog), textEntry, 1);
+
+    gtk_widget_show_all(dialog);
+    gtk_dialog_run(GTK_DIALOG(dialog));
+
+    updateStartTime(
+        time,
+        grid,
+        window,
+        gtk_entry_get_text(GTK_ENTRY(textEntry)),
+        timerData
+    );
+    gtk_widget_destroy(dialog);
+}
+
 /**
  * Initial setup of the timer (constructor). Sets that we are not running
  * and also sets a notification
@@ -214,4 +260,73 @@ void resumeTimer(TimerP timer)
 	timer->startLocalTime = localtime(&timer->startTime);
 	g_source_remove(timer->timeoutIdentifier);
 
+}
+
+void startTimerPressed (GtkWidget *widget, TimerDataP timerData)
+{
+    TimerP timer = timerData->timerPointer;
+
+    gboolean success = startTimer(timer);
+    if(success) {
+        gchar buffer[256];
+        GtkWidget *windowTime;
+        GtkWidget *windowAction;
+        GtkWidget *windowElapsed;
+        GtkWidget *grid = timerData->grid;
+        GtkWidget *window = timerData->window;
+        GtkWidget *startButton = timerData->startButton;
+        GtkWidget *stopButton = timerData->stopButton;
+        GtkWidget *lapButton = timerData->lapButton;
+        GtkWidget *pauseButton = timerData->pauseButton;
+
+        gtk_button_set_label(GTK_BUTTON(pauseButton), "Pause");
+
+        strftime(buffer, 256, "%I:%M:%S%P", timer->startLocalTime);
+        windowTime = gtk_label_new(buffer);
+        windowAction = gtk_label_new("Timer Started");
+        windowElapsed = gtk_label_new("--");
+        gtk_grid_remove_row(GTK_GRID(grid), 3);
+        gtk_grid_insert_row(GTK_GRID(grid), 0);
+        gtk_grid_attach(GTK_GRID(grid), windowTime, 0, 0, 1, 1);
+        gtk_grid_attach(GTK_GRID(grid), windowAction, 1, 0, 1, 1);
+        gtk_grid_attach(GTK_GRID(grid), windowElapsed, 2, 0, 1, 1);
+        gtk_widget_hide(startButton);
+        gtk_widget_show(pauseButton);
+        gtk_widget_show(lapButton);
+        gtk_widget_show(stopButton);
+        gtk_widget_show(windowTime);
+        gtk_widget_show(windowAction);
+        gtk_widget_show(windowElapsed);
+        displayWorkingRequest(buffer, grid, window, timerData);
+    }
+}
+
+void updateStartTime(
+    gchar time[256],
+    GtkWidget *grid,
+    GtkWidget *window,
+    const gchar *text,
+    TimerDataP timerData
+) {
+    GtkWidget *windowTime;
+    GtkWidget *windowAction;
+    GtkWidget *windowElapsed;
+
+    windowTime = gtk_label_new(time);
+    windowAction = gtk_label_new("Timer Started");
+    strlen(text);
+
+    TimerP timer = timerData->timerPointer;
+    sprintf(timer->subject, "%s", text);
+
+    windowElapsed = gtk_label_new(text);
+    gtk_grid_remove_row(GTK_GRID(grid), 0);
+    gtk_grid_insert_row(GTK_GRID(grid), 0);
+    gtk_grid_attach(GTK_GRID(grid), windowTime, 0, 0, 1, 1);
+    gtk_grid_attach(GTK_GRID(grid), windowAction, 1, 0, 1, 1);
+    gtk_grid_attach(GTK_GRID(grid), windowElapsed, 2, 0, 1, 1);
+
+    gtk_widget_show(windowTime);
+    gtk_widget_show(windowAction);
+    gtk_widget_show(windowElapsed);
 }
