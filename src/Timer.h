@@ -33,6 +33,13 @@ typedef struct Timer {
     int elapsedSeconds;
 }*TimerP;
 
+// Public function prototypes
+/**
+ * Returns the time that has elapsed thus far
+ */
+gboolean startTimer(TimerP);
+gboolean stopTimer(TimerP);
+gchar *getCurrentTime(TimerP);
 void debug(TimerP);
 /**
  * Initial setup of the timer (constructor). Sets that we are not running
@@ -41,21 +48,6 @@ void debug(TimerP);
 void initTimer(TimerP);
 void pauseTimer(TimerP);
 void resumeTimer(TimerP);
-/**
- * Returns the time that has elapsed thus far
- */
-gchar *getCurrentTime(TimerP);
-GtkWidget* createGrid();
-GtkWidget* createWindow();
-/**
- * Convert a provided number of seconds into a user friendly display
- */
-void setElapsedTime(int, TimerP);
-void loadCurrentTime(TimerP);
 void getElapsedTime(TimerP);
-const gchar *getTime();
-gboolean alertUser(TimerP);
-gboolean startTimer(TimerP);
-gboolean stopTimer(TimerP);
 
 #endif

@@ -1,8 +1,4 @@
-#include <stdio.h>
 #include <gtk/gtk.h>
-#include <glib.h>
-#include <time.h>
-#include <cairo.h>
 
 #include "Interface.h"
 

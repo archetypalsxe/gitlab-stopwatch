@@ -1,5 +1,14 @@
 #include "Timer.h"
 
+// Private function prototypes
+/**
+ * Convert a provided number of seconds into a user friendly display
+ */
+const gchar *getTime();
+gboolean alertUser(TimerP);
+void loadCurrentTime(TimerP);
+void setElapsedTime(int, TimerP);
+
 void debug(TimerP timer)
 {
     printf("***Debugging***\n");
@@ -34,26 +43,6 @@ void initTimer(TimerP timer)
 gchar * getCurrentTime(TimerP timer) {
     loadCurrentTime(timer);
     return timer->elapsedTime;
-}
-
-GtkWidget* createGrid() {
-    GtkWidget *grid = gtk_grid_new();
-    gtk_grid_set_column_spacing(GTK_GRID(grid), 20);
-    gtk_grid_set_row_spacing(GTK_GRID(grid), 10);
-    return grid;
-}
-
-GtkWidget* createWindow() {
-    GtkWidget* window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-    gtk_window_set_default_size(
-        GTK_WINDOW(window),
-        WINDOW_WIDTH,
-        WINDOW_HEIGHT
-    );
-    gtk_window_set_title (GTK_WINDOW (window), "Stopwatch");
-    g_signal_connect (window, "destroy", G_CALLBACK (gtk_main_quit), NULL);
-    gtk_container_set_border_width (GTK_CONTAINER (window), 20);
-    return window;
 }
 
 void setElapsedTime(int seconds, TimerP timer) {
