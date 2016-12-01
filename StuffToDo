@@ -1,9 +1,8 @@
 Increase Quality of Code
     Seperate out the two structure classes
-        Move into different header and code files
-        One for the GUI
-        One for the internals of time capabilities
+        Improve devision between two classes
     Generic "button pressed" function
+Make read me file better
 Ability to turn On/Off notifications from GUI
 Add additional lines in log
     Or scroll bar

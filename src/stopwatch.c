@@ -4,7 +4,7 @@
 #include <time.h>
 #include <cairo.h>
 
-#include "Timer.h"
+#include "Interface.h"
 
 int main (int argc, char *argv[]) {
     /**

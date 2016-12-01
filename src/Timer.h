@@ -1,5 +1,5 @@
-#ifndef _timer_h
-#define _timer_h
+#ifndef TIMER_H
+#define TIMER_H
 
 #include <glib.h>
 #include <string.h>
@@ -33,44 +33,14 @@ typedef struct Timer {
     int elapsedSeconds;
 }*TimerP;
 
-/**
- * This "class" holds all of the GtkWidgets that are necesary for making
- * the display work. It also includes a pointer to the Timer object so that
- * we can keep track of time
- *
- * @TODO Make this class just deal with the user interface, this class
- * will get bigger and the other (Timer) will get smaller
- */
-typedef struct TimerData {
-    TimerP timerPointer;
-    GtkWidget *grid;
-    GtkWidget *window;
-    GtkWidget *startButton;
-    GtkWidget *stopButton;
-    GtkWidget *lapButton;
-    GtkWidget *pauseButton;
-} *TimerDataP;
-
-
-
 void debug(TimerP);
-void displayWorkingRequest(gchar[256], GtkWidget*, GtkWidget*, TimerDataP);
-void initializeObjects();
 /**
  * Initial setup of the timer (constructor). Sets that we are not running
  * and also sets a notification
  */
 void initTimer(TimerP);
-/**
- * Called when the lap button is pressed
- */
-void lapButtonPressed (GtkWidget*, TimerDataP);
-void pauseButtonPressed (GtkWidget*, TimerDataP);
 void pauseTimer(TimerP);
 void resumeTimer(TimerP);
-void startTimerPressed(GtkWidget*, TimerDataP);
-void stopTimerPressed(GtkWidget*, TimerDataP);
-void updateStartTime(char[256], GtkWidget*, GtkWidget*, const gchar*, TimerDataP);
 /**
  * Returns the time that has elapsed thus far
  */
