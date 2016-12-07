@@ -35,19 +35,35 @@ typedef struct Timer {
 
 // Public function prototypes
 /**
- * Returns the time that has elapsed thus far
+ * Start the timer. Returns whether the starting was successful or not
  */
 gboolean startTimer(TimerP);
+/**
+ * Stop the timer. Returns whether or not the stopping was successful
+ */
 gboolean stopTimer(TimerP);
-gchar *getCurrentTime(TimerP);
+/**
+ * Returns the current time that has elapsed
+ */
+gchar *getElapsedTime(TimerP);
+/**
+ * Used for outputting debugging information to the console
+ *
+ * @TODO This should be able to be initiated in the calling parameters
+ */
 void debug(TimerP);
 /**
  * Initial setup of the timer (constructor). Sets that we are not running
  * and also sets a notification
  */
 void initTimer(TimerP);
+/**
+ * Pause the timer so it is no longer running but able to be easily resumed
+ */
 void pauseTimer(TimerP);
+/**
+ * Resume the timer after it has been paused
+ */
 void resumeTimer(TimerP);
-void getElapsedTime(TimerP);
 
 #endif

@@ -64,7 +64,7 @@ GtkWidget* createWindow() {
 
 void displayWorkingRequest (
     gchar currentText[256],
-    InterfacePointer interfacePointer
+    InterfacePointer interface
 ) {
     GtkWidget *dialog;
     GtkWidget *textEntry;
@@ -75,7 +75,7 @@ void displayWorkingRequest (
     GtkDialogFlags flags = GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT;
     dialog = gtk_dialog_new_with_buttons(
         "Starting Timer",
-        GTK_WINDOW(interfacePointer->window),
+        GTK_WINDOW(interface->window),
         flags,
         NULL
     );
@@ -99,7 +99,7 @@ void displayWorkingRequest (
     updateStartTime(
         currentText,
         gtk_entry_get_text(GTK_ENTRY(textEntry)),
-        interfacePointer
+        interface
     );
     gtk_widget_destroy(dialog);
 }
@@ -122,39 +122,39 @@ void initializeObjects()
     GtkWidget *lapButton = gtk_button_new_with_label ("Display Time");
     GtkWidget *pauseButton = gtk_button_new_with_label ("Pause");
 
-    InterfacePointer interfacePointer;
-    interfacePointer = malloc(sizeof(struct Interface));
-    interfacePointer->timerPointer = timerPointer;
-    interfacePointer->grid = grid;
-    interfacePointer->window = window;
-    interfacePointer->startButton = startButton;
-    interfacePointer->stopButton = stopButton;
-    interfacePointer->lapButton = lapButton;
-    interfacePointer->pauseButton = pauseButton;
+    InterfacePointer interface;
+    interface = malloc(sizeof(struct Interface));
+    interface->timerPointer = timerPointer;
+    interface->grid = grid;
+    interface->window = window;
+    interface->startButton = startButton;
+    interface->stopButton = stopButton;
+    interface->lapButton = lapButton;
+    interface->pauseButton = pauseButton;
 
     g_signal_connect (
         startButton,
         "clicked",
         G_CALLBACK (startTimerPressed),
-        interfacePointer
+        interface
     );
     g_signal_connect (
         stopButton,
         "clicked",
         G_CALLBACK (stopTimerPressed),
-        interfacePointer
+        interface
     );
     g_signal_connect (
         lapButton,
         "clicked",
         G_CALLBACK(lapButtonPressed),
-        interfacePointer
+        interface
     );
     g_signal_connect (
         pauseButton,
         "clicked",
         G_CALLBACK(pauseButtonPressed),
-        interfacePointer
+        interface
     );
 
     gtk_grid_attach (GTK_GRID (grid), startButton, 0, 4, 1, 1);
@@ -168,20 +168,20 @@ void initializeObjects()
     gtk_widget_hide(pauseButton);
 }
 
-void lapButtonPressed (GtkWidget *widget, InterfacePointer interfacePointer)
+void lapButtonPressed (GtkWidget *widget, InterfacePointer interface)
 {
     gchar eventTimeString[256];
     gchar *currentElapsed;
     time_t currentTime;
 
-    TimerP timer = interfacePointer->timerPointer;
-    currentElapsed = getCurrentTime(timer);
+    TimerP timer = interface->timerPointer;
+    currentElapsed = getElapsedTime(timer);
 
     GtkWidget *windowTime;
     GtkWidget *windowAction;
     GtkWidget *windowElapsed;
-    GtkWidget *grid = interfacePointer->grid;
-    GtkWidget *window = interfacePointer->window;
+    GtkWidget *grid = interface->grid;
+    GtkWidget *window = interface->window;
 
     currentTime = time(NULL);
     strftime(eventTimeString, 256, "%I:%M:%S%P", localtime(&currentTime));
@@ -202,19 +202,19 @@ void lapButtonPressed (GtkWidget *widget, InterfacePointer interfacePointer)
     gtk_widget_show(windowElapsed);
 }
 
-void pauseButtonPressed (GtkWidget *widget, InterfacePointer interfacePointer)
+void pauseButtonPressed (GtkWidget *widget, InterfacePointer interface)
 {
     // Timer isn't running, pause button shouldn't be visible
-    if (!interfacePointer->timerPointer->running) {
-        gtk_widget_hide(interfacePointer->pauseButton);
+    if (!interface->timerPointer->running) {
+        gtk_widget_hide(interface->pauseButton);
     }
 
-    if (!interfacePointer->timerPointer->paused) {
-        pauseTimer(interfacePointer->timerPointer);
+    if (!interface->timerPointer->paused) {
+        pauseTimer(interface->timerPointer);
 
-        gtk_widget_hide(interfacePointer->lapButton);
+        gtk_widget_hide(interface->lapButton);
 
-        TimerP timer = interfacePointer->timerPointer;
+        TimerP timer = interface->timerPointer;
         gchar buffer[256];
         strftime(buffer, 256, "%I:%M:%S%P", timer->stopLocalTime);
         GtkWidget *windowTime;
@@ -227,7 +227,7 @@ void pauseButtonPressed (GtkWidget *widget, InterfacePointer interfacePointer)
 
         GtkWidget *windowElapsed;
         windowElapsed = gtk_label_new(timer->elapsedTime);
-        GtkWidget *grid = interfacePointer->grid;
+        GtkWidget *grid = interface->grid;
         gtk_grid_remove_row(GTK_GRID(grid), 3);
         gtk_grid_insert_row(GTK_GRID(grid), 0);
         gtk_grid_attach(GTK_GRID(grid), windowTime, 0, 0, 1, 1);
@@ -237,12 +237,12 @@ void pauseButtonPressed (GtkWidget *widget, InterfacePointer interfacePointer)
         gtk_widget_show(windowAction);
         gtk_widget_show(windowElapsed);
 
-        gtk_button_set_label(GTK_BUTTON(interfacePointer->pauseButton), "Resume");
+        gtk_button_set_label(GTK_BUTTON(interface->pauseButton), "Resume");
     } else {
-        resumeTimer(interfacePointer->timerPointer);
-        gtk_widget_show(interfacePointer->lapButton);
+        resumeTimer(interface->timerPointer);
+        gtk_widget_show(interface->lapButton);
 
-        TimerP timer = interfacePointer->timerPointer;
+        TimerP timer = interface->timerPointer;
         gchar buffer[256];
         strftime(buffer, 256, "%I:%M:%S%P", timer->startLocalTime);
         GtkWidget *windowTime;
@@ -255,7 +255,7 @@ void pauseButtonPressed (GtkWidget *widget, InterfacePointer interfacePointer)
 
         GtkWidget *windowElapsed;
         windowElapsed = gtk_label_new(timer->elapsedTime);
-        GtkWidget *grid = interfacePointer->grid;
+        GtkWidget *grid = interface->grid;
         gtk_grid_remove_row(GTK_GRID(grid), 3);
         gtk_grid_insert_row(GTK_GRID(grid), 0);
         gtk_grid_attach(GTK_GRID(grid), windowTime, 0, 0, 1, 1);
@@ -266,13 +266,13 @@ void pauseButtonPressed (GtkWidget *widget, InterfacePointer interfacePointer)
         gtk_widget_show(windowElapsed);
 
 
-        gtk_button_set_label(GTK_BUTTON(interfacePointer->pauseButton), "Pause");
+        gtk_button_set_label(GTK_BUTTON(interface->pauseButton), "Pause");
     }
 }
 
-void startTimerPressed (GtkWidget *widget, InterfacePointer interfacePointer)
+void startTimerPressed (GtkWidget *widget, InterfacePointer interface)
 {
-    TimerP timer = interfacePointer->timerPointer;
+    TimerP timer = interface->timerPointer;
 
     gboolean success = startTimer(timer);
     if(success) {
@@ -280,12 +280,12 @@ void startTimerPressed (GtkWidget *widget, InterfacePointer interfacePointer)
         GtkWidget *windowTime;
         GtkWidget *windowAction;
         GtkWidget *windowElapsed;
-        GtkWidget *grid = interfacePointer->grid;
-        GtkWidget *window = interfacePointer->window;
-        GtkWidget *startButton = interfacePointer->startButton;
-        GtkWidget *stopButton = interfacePointer->stopButton;
-        GtkWidget *lapButton = interfacePointer->lapButton;
-        GtkWidget *pauseButton = interfacePointer->pauseButton;
+        GtkWidget *grid = interface->grid;
+        GtkWidget *window = interface->window;
+        GtkWidget *startButton = interface->startButton;
+        GtkWidget *stopButton = interface->stopButton;
+        GtkWidget *lapButton = interface->lapButton;
+        GtkWidget *pauseButton = interface->pauseButton;
 
         gtk_button_set_label(GTK_BUTTON(pauseButton), "Pause");
 
@@ -305,26 +305,25 @@ void startTimerPressed (GtkWidget *widget, InterfacePointer interfacePointer)
         gtk_widget_show(windowTime);
         gtk_widget_show(windowAction);
         gtk_widget_show(windowElapsed);
-        displayWorkingRequest(buffer, interfacePointer);
+        displayWorkingRequest(buffer, interface);
     }
 }
 
-void stopTimerPressed (GtkWidget *widget, InterfacePointer interfacePointer)
+void stopTimerPressed (GtkWidget *widget, InterfacePointer interface)
 {
-    TimerP timer = interfacePointer->timerPointer;
+    TimerP timer = interface->timerPointer;
 
     if(stopTimer(timer)) {
-        getElapsedTime(timer);
         gchar buffer[256];
         GtkWidget *windowTime;
         GtkWidget *windowAction;
         GtkWidget *windowElapsed;
-        GtkWidget *grid = interfacePointer->grid;
-        GtkWidget *window = interfacePointer->window;
-        GtkWidget *startButton = interfacePointer->startButton;
-        GtkWidget *stopButton = interfacePointer->stopButton;
-        GtkWidget *lapButton = interfacePointer->lapButton;
-        GtkWidget *pauseButton = interfacePointer->pauseButton;
+        GtkWidget *grid = interface->grid;
+        GtkWidget *window = interface->window;
+        GtkWidget *startButton = interface->startButton;
+        GtkWidget *stopButton = interface->stopButton;
+        GtkWidget *lapButton = interface->lapButton;
+        GtkWidget *pauseButton = interface->pauseButton;
 
         strftime(buffer, 256, "%I:%M:%S%P", timer->stopLocalTime);
         windowTime = gtk_label_new(buffer);
@@ -352,18 +351,18 @@ void stopTimerPressed (GtkWidget *widget, InterfacePointer interfacePointer)
 void updateStartTime(
     gchar time[256],
     const gchar *text,
-    InterfacePointer interfacePointer
+    InterfacePointer interface
 ) {
     GtkWidget *grid, *window, *windowAction, *windowTime, *windowElapsed;
 
-    grid = interfacePointer->grid;
-    window = interfacePointer->window;
+    grid = interface->grid;
+    window = interface->window;
 
     windowTime = gtk_label_new(time);
     windowAction = gtk_label_new("Timer Started");
     strlen(text);
 
-    TimerP timer = interfacePointer->timerPointer;
+    TimerP timer = interface->timerPointer;
     sprintf(timer->subject, "%s", text);
 
     windowElapsed = gtk_label_new(text);

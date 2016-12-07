@@ -1,6 +1,6 @@
+Display seconds not working, needs to reset start time
 Increase Quality of Code
     Seperate out the two structure classes
-        Change "interfacePointer" variable to just interface?
         Go through and document Timer.h/c make any immediate logical changes
         Go through code of Interface.c
         Go through code of Timer.c
