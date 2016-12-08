@@ -51,7 +51,6 @@ gboolean startTimer(TimerP timer) {
         timer->paused = FALSE;
 
         timer->startTime = time(NULL);
-printf("Setting to 0\n");
         timer->elapsedSeconds = 0;
         timer->startLocalTime = localtime(&timer->startTime);
 
@@ -91,7 +90,6 @@ gboolean stopTimer(TimerP timer) {
 
 gchar * getElapsedTime(TimerP timer)
 {
-    //loadCurrentTime(timer);
     loadElapsedTime(timer);
     return timer->elapsedTime;
 }
@@ -124,22 +122,18 @@ void initTimer(TimerP timer)
         (GSourceFunc)alertUser,
         timer
     );
-printf("Initializing...\n");
     timer->elapsedSeconds = 0;
 }
 
 void loadElapsedTime(TimerP timer)
 {
     sprintf(timer->elapsedTime, "");
-printf("Elapsed Time Before: %d\n", timer->elapsedSeconds);
     int elapsedTime =
         timer->elapsedSeconds +
         (int)difftime(time(NULL), timer->startTime);
 
-printf("Elapsed Time After: %d\n", elapsedTime);
     timer->elapsedSeconds = elapsedTime;
     setElapsedTime(elapsedTime, timer);
-printf("Elapsed Time Really After: %d\n", timer->elapsedSeconds);
 }
 
 void pauseTimer(TimerP timer)
@@ -169,7 +163,6 @@ void resumeTimer(TimerP timer)
     timer->startTime = time(NULL);
     timer->startLocalTime = localtime(&timer->startTime);
     g_source_remove(timer->timeoutIdentifier);
-printf("Elapsed Time When Resuming: %d\n", timer->elapsedSeconds);
 }
 
 void setElapsedTime(int seconds, TimerP timer)

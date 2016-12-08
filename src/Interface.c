@@ -168,6 +168,9 @@ void initializeObjects()
     gtk_widget_hide(pauseButton);
 }
 
+/**
+ * @TODO A bunch of this should be moved into the timer object
+ */
 void lapButtonPressed (GtkWidget *widget, InterfacePointer interface)
 {
     gchar eventTimeString[256];
@@ -183,7 +186,7 @@ void lapButtonPressed (GtkWidget *widget, InterfacePointer interface)
     GtkWidget *grid = interface->grid;
     GtkWidget *window = interface->window;
 
-    currentTime = time(NULL);
+    timer->startTime = currentTime = time(NULL);
     strftime(eventTimeString, 256, "%I:%M:%S%P", localtime(&currentTime));
     windowTime = gtk_label_new(eventTimeString);
 
