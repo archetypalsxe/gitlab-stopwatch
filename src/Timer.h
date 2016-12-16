@@ -33,6 +33,10 @@ typedef struct Timer {
     gchar subject[256];
     // Used for notifying user that we are not running
     guint timeoutIdentifier;
+    /**
+     * The frequency we will alert the user in micro seconds
+     */
+    int alertFrequency;
     int elapsedSeconds;
 }*TimerP;
 

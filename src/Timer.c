@@ -8,8 +8,6 @@ const gchar *getCurrentTime();
 /**
  * Alerts the user that the timer has not been running. Sets up a followup
  * alert based on the provided number of microseconds
- *
- * @TODO Ability to pass in number of seconds until next alert
  */
 gboolean alertUser(TimerP);
 
@@ -50,13 +48,14 @@ const gchar *getCurrentTime() {
 
 
 gboolean alertUser(TimerP timer) {
-    if(timer->running) {
+    if(timer->running && !timer->paused) {
         return FALSE;
     }
     NotifyNotification *notification;
     notify_init("Basic");
 
     notification = notify_notification_new("Timer is not running", NULL, NULL);
+    // @TODO 8000 should be a constant
     notify_notification_set_timeout (notification, 8000);
     notify_notification_show (notification, NULL);
     return TRUE;
@@ -116,10 +115,7 @@ gboolean timerStopped (TimerP timer, gboolean paused)
 
     /* Set up notification for every 5 minutes (300000) */
     timer->timeoutIdentifier = g_timeout_add(
-            /**
-             * @TODO This should be dynamic
-             */
-        200000,
+        timer->alertFrequency,
         (GSourceFunc)alertUser,
         timer
     );
@@ -154,11 +150,12 @@ void debug(TimerP timer)
 void initTimer(TimerP timer)
 {
     timer->running = FALSE;
+    timer->alertFrequency = 2000;
     /**
      * Set up notifications. 5 Minutes is 300000
      */
     timer->timeoutIdentifier = g_timeout_add(
-        200000,
+        timer->alertFrequency,
         (GSourceFunc)alertUser,
         timer
     );

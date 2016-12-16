@@ -1,9 +1,9 @@
+TODO's
 Increase Quality of Code
     Seperate out the two structure classes
         Go through code of Timer.c
         Go through code of Interface.c
     Generic "button pressed" function
-    TODO's
 Make read me file better
 Ability to turn On/Off notifications from GUI
 Add additional lines in log
