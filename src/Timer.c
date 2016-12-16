@@ -12,6 +12,7 @@ const gchar *getCurrentTime();
  * @TODO Ability to pass in number of seconds until next alert
  */
 gboolean alertUser(TimerP);
+
 /**
  * Called when the timer has been started. Done to remove duplciate code
  * between starting and resuming after pause
@@ -61,21 +62,7 @@ gboolean alertUser(TimerP timer) {
 }
 
 gboolean startTimer(TimerP timer) {
-    if(timer->running) {
-        return FALSE;
-    } else {
-        timer->running = TRUE;
-        timer->paused = FALSE;
-
-        timer->startTime = time(NULL);
-        timer->elapsedSeconds = 0;
-        timer->startLocalTime = localtime(&timer->startTime);
-
-        //Remove notification that timer is not running
-        g_source_remove(timer->timeoutIdentifier);
-
-        return TRUE;
-    }
+    return timerStarted(timer);
 }
 
 gboolean stopTimer(TimerP timer) {
@@ -84,19 +71,39 @@ gboolean stopTimer(TimerP timer) {
 
 gboolean timerStarted (TimerP timer)
 {
-    /**
-     * @TODO: Implement
-     */
+    if(timer->running && !timer->paused) {
+        return FALSE;
+    }
+
+    timer->startTime = time(NULL);
+
+    // If we are resuming instead of starting
+    if(!timer->paused) {
+        timer->elapsedSeconds = 0;
+    }
+
+    timer->running = TRUE;
+    timer->paused = FALSE;
+
+    timer->startLocalTime = localtime(&timer->startTime);
+
+    //Remove notification that timer is not running
+    g_source_remove(timer->timeoutIdentifier);
+
     return TRUE;
 }
 
+/**
+ * @TODO Should be able to determine if paused or not from status
+ */
 gboolean timerStopped (TimerP timer, gboolean paused)
 {
+    // @TODO Inverse this and return immediately
     if(timer->running || (!paused && timer->paused)) {
         timer->endTime = time(NULL);
         timer->stopLocalTime = localtime(&timer->endTime);
 
-        if(paused || timer->running) {
+        if(!timer->paused) {
             loadElapsedTime(timer);
         }
 
@@ -178,15 +185,7 @@ void pauseTimer(TimerP timer)
 
 void resumeTimer(TimerP timer)
 {
-    // Not currently paused
-    if (!timer->paused) {
-        return;
-    }
-    timer->paused = FALSE;
-    timer->running = TRUE;
-    timer->startTime = time(NULL);
-    timer->startLocalTime = localtime(&timer->startTime);
-    g_source_remove(timer->timeoutIdentifier);
+    timerStarted(timer);
 }
 
 void setElapsedTime(int seconds, TimerP timer)
