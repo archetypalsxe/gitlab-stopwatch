@@ -13,9 +13,26 @@ const gchar *getCurrentTime();
  */
 gboolean alertUser(TimerP);
 /**
+ * Called when the timer has been started. Done to remove duplciate code
+ * between starting and resuming after pause
+ */
+gboolean timerStarted(TimerP);
+/**
+ * Called when the timer is stopped. Done to remove duplicate code between
+ * pausing and stopping
+ *
+ * @param TimerP timer
+ * @param gboolean paused Whether or not we are pausing (instead of stopping)
+ */
+gboolean timerStopped(TimerP, gboolean);
+/**
  * Load up the elapsed time
  */
 void loadElapsedTime(TimerP);
+/**
+ * Sets the elapsed time string.  Takes in the number of seconds that
+ * have elapsed to be formatted
+ */
 void setElapsedTime(int, TimerP);
 
 const gchar *getCurrentTime() {
@@ -62,29 +79,47 @@ gboolean startTimer(TimerP timer) {
 }
 
 gboolean stopTimer(TimerP timer) {
-    if(timer->running) {
-        timer->running = FALSE;
+    return timerStopped(timer, FALSE);
+}
+
+gboolean timerStarted (TimerP timer)
+{
+    /**
+     * @TODO: Implement
+     */
+    return TRUE;
+}
+
+gboolean timerStopped (TimerP timer, gboolean paused)
+{
+    if(timer->running || (!paused && timer->paused)) {
         timer->endTime = time(NULL);
         timer->stopLocalTime = localtime(&timer->endTime);
 
-        if(timer->paused) {
-            timer->paused = FALSE;
-        } else {
+        if(paused || timer->running) {
             loadElapsedTime(timer);
+        }
+
+        timer->paused = paused;
+
+        if(!paused) {
+            timer->running = FALSE;
         }
 
 
         /* Set up notification for every 5 minutes (300000) */
         timer->timeoutIdentifier = g_timeout_add(
+                /**
+                 * @TODO This should be dynamic
+                 */
             200000,
             (GSourceFunc)alertUser,
             timer
         );
 
         return TRUE;
-    } else {
-        return FALSE;
     }
+    return FALSE;
 }
 
 
@@ -138,19 +173,7 @@ void loadElapsedTime(TimerP timer)
 
 void pauseTimer(TimerP timer)
 {
-    // We are already paused
-    if (timer->paused) {
-        return;
-    }
-    timer->endTime = time(NULL);
-    timer->stopLocalTime = localtime(&timer->endTime);
-    timer->timeoutIdentifier = g_timeout_add(
-        200000,
-        (GSourceFunc)alertUser, timer
-    );
-
-    timer->paused = TRUE;
-    loadElapsedTime(timer);
+    timerStopped(timer, TRUE);
 }
 
 void resumeTimer(TimerP timer)
@@ -160,6 +183,7 @@ void resumeTimer(TimerP timer)
         return;
     }
     timer->paused = FALSE;
+    timer->running = TRUE;
     timer->startTime = time(NULL);
     timer->startLocalTime = localtime(&timer->startTime);
     g_source_remove(timer->timeoutIdentifier);

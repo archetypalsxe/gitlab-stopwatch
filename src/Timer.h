@@ -20,6 +20,9 @@
  * with the UI (shouldn't have subject and stuff)
  */
 typedef struct Timer {
+    /**
+     * @TODO This should eventually be changed to isStopped or stopped
+     */
     gboolean running;
     gboolean paused;
     struct tm *startLocalTime;

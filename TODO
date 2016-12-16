@@ -1,9 +1,8 @@
-Display seconds not working, needs to reset start time
 Increase Quality of Code
     Seperate out the two structure classes
-        Go through and document Timer.h/c make any immediate logical changes
-        Go through code of Interface.c
         Go through code of Timer.c
+            Combine start/resume timer stuff
+        Go through code of Interface.c
     Generic "button pressed" function
     TODO's
 Make read me file better
