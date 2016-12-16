@@ -18,6 +18,7 @@ gboolean alertUser(TimerP);
  * between starting and resuming after pause
  */
 gboolean timerStarted(TimerP);
+
 /**
  * Called when the timer is stopped. Done to remove duplicate code between
  * pausing and stopping
@@ -93,40 +94,37 @@ gboolean timerStarted (TimerP timer)
     return TRUE;
 }
 
-/**
- * @TODO Should be able to determine if paused or not from status
- */
 gboolean timerStopped (TimerP timer, gboolean paused)
 {
-    // @TODO Inverse this and return immediately
-    if(timer->running || (!paused && timer->paused)) {
-        timer->endTime = time(NULL);
-        timer->stopLocalTime = localtime(&timer->endTime);
-
-        if(!timer->paused) {
-            loadElapsedTime(timer);
-        }
-
-        timer->paused = paused;
-
-        if(!paused) {
-            timer->running = FALSE;
-        }
-
-
-        /* Set up notification for every 5 minutes (300000) */
-        timer->timeoutIdentifier = g_timeout_add(
-                /**
-                 * @TODO This should be dynamic
-                 */
-            200000,
-            (GSourceFunc)alertUser,
-            timer
-        );
-
-        return TRUE;
+    if(!timer->running) {
+        return FALSE;
     }
-    return FALSE;
+
+    timer->endTime = time(NULL);
+    timer->stopLocalTime = localtime(&timer->endTime);
+
+    if(!timer->paused) {
+        loadElapsedTime(timer);
+    }
+
+    timer->paused = paused;
+
+    if(!paused) {
+        timer->running = FALSE;
+    }
+
+
+    /* Set up notification for every 5 minutes (300000) */
+    timer->timeoutIdentifier = g_timeout_add(
+            /**
+             * @TODO This should be dynamic
+             */
+        200000,
+        (GSourceFunc)alertUser,
+        timer
+    );
+
+    return TRUE;
 }
 
 

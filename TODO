@@ -1,7 +1,6 @@
 Increase Quality of Code
     Seperate out the two structure classes
         Go through code of Timer.c
-            Remove paused parameter to timerStopped function
         Go through code of Interface.c
     Generic "button pressed" function
     TODO's
