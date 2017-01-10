@@ -3,6 +3,9 @@
 
 #include "Timer.h"
 
+#define WINDOW_WIDTH 550
+#define WINDOW_HEIGHT 200
+
 /**
  * This "class" holds all of the GtkWidgets that are necesary for making
  * the display work. It also includes a pointer to the Timer object so that

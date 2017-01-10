@@ -9,8 +9,9 @@
 #include <gtk/gtk.h>
 #include <stdlib.h>
 
-#define WINDOW_WIDTH 550
-#define WINDOW_HEIGHT 200
+// 300,000 is 5 minutes
+#define ALERT_FREQUENCY 300000;
+#define ALERT_TIMEOUT 8000;
 
 /**
  * The "class" that has all the data for the timer itself and handles all

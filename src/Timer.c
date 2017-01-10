@@ -55,8 +55,8 @@ gboolean alertUser(TimerP timer) {
     notify_init("Basic");
 
     notification = notify_notification_new("Timer is not running", NULL, NULL);
-    // @TODO 8000 should be a constant
-    notify_notification_set_timeout (notification, 8000);
+    int alertTimeout = ALERT_TIMEOUT;
+    notify_notification_set_timeout (notification, alertTimeout);
     notify_notification_show (notification, NULL);
     return TRUE;
 }
@@ -150,10 +150,7 @@ void debug(TimerP timer)
 void initTimer(TimerP timer)
 {
     timer->running = FALSE;
-    timer->alertFrequency = 2000;
-    /**
-     * Set up notifications. 5 Minutes is 300000
-     */
+    timer->alertFrequency = ALERT_FREQUENCY;
     timer->timeoutIdentifier = g_timeout_add(
         timer->alertFrequency,
         (GSourceFunc)alertUser,

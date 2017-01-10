@@ -34,12 +34,9 @@ void stopTimerPressed(GtkWidget*, InterfacePointer);
 /**
  * Called once the user has entered what they are working on so we can update
  * that row in the display
- *
- * @TODO This can hopefully be changed to just update the row so we don't have
- * to have the time passed into it
  */
 void updateStartTime(
-    char[256], const gchar*, InterfacePointer
+    const gchar*, InterfacePointer
 );
 
 GtkWidget* createGrid() {
@@ -97,7 +94,6 @@ void displayWorkingRequest (
     gtk_dialog_run(GTK_DIALOG(dialog));
 
     updateStartTime(
-        currentText,
         gtk_entry_get_text(GTK_ENTRY(textEntry)),
         interface
     );
@@ -352,34 +348,16 @@ void stopTimerPressed (GtkWidget *widget, InterfacePointer interface)
 }
 
 void updateStartTime(
-    gchar time[256],
     const gchar *text,
     InterfacePointer interface
 ) {
-    GtkWidget *grid, *window, *windowAction, *windowTime, *windowElapsed;
+    GtkWidget *grid, *windowElapsed;
 
     grid = interface->grid;
-    window = interface->window;
-
-    windowTime = gtk_label_new(time);
-    windowAction = gtk_label_new("Timer Started");
-    strlen(text);
 
     TimerP timer = interface->timerPointer;
     sprintf(timer->subject, "%s", text);
 
-    windowElapsed = gtk_label_new(text);
-    /**
-     * @TODO Is it possible to update the row rather than removing and
-     * inserting it?
-     */
-    gtk_grid_remove_row(GTK_GRID(grid), 0);
-    gtk_grid_insert_row(GTK_GRID(grid), 0);
-    gtk_grid_attach(GTK_GRID(grid), windowTime, 0, 0, 1, 1);
-    gtk_grid_attach(GTK_GRID(grid), windowAction, 1, 0, 1, 1);
-    gtk_grid_attach(GTK_GRID(grid), windowElapsed, 2, 0, 1, 1);
-
-    gtk_widget_show(windowTime);
-    gtk_widget_show(windowAction);
-    gtk_widget_show(windowElapsed);
+    windowElapsed = gtk_grid_get_child_at(GTK_GRID(grid), 2, 0);
+    gtk_label_set_text(GTK_LABEL(windowElapsed), text);
 }
