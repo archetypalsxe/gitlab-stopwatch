@@ -20,8 +20,6 @@
 typedef struct Timer {
     gboolean stopped;
     gboolean paused;
-    struct tm *startLocalTime;
-    struct tm *stopLocalTime;
     time_t startTime;
     time_t endTime;
     gchar elapsedTime[256];
@@ -65,13 +63,17 @@ void debug(TimerP);
  */
 void initTimer(TimerP);
 /**
- * Load the current local time into the provided string
- */
-void loadCurrentLocalTime(char*, int);
-/**
  * Load the provided local time into the provided string
  */
 void loadProvidedLocalTime(time_t, char*, int);
+/**
+ * Load the start time from the provided timer into the provided string
+ */
+void loadStartLocalTime(TimerP, char*, int);
+/**
+ * Load the stop time from the provided timer into the provided string
+ */
+void loadStopLocalTime(TimerP, char*, int);
 /**
  * Pause the timer so it is no longer running but able to be easily resumed
  */

@@ -75,8 +75,6 @@ gboolean timerStarted (TimerP timer)
     timer->stopped = FALSE;
     timer->paused = FALSE;
 
-    timer->startLocalTime = localtime(&timer->startTime);
-
     //Remove notification that timer is not running
     g_source_remove(timer->timeoutIdentifier);
 
@@ -90,7 +88,6 @@ gboolean timerStopped (TimerP timer, gboolean paused)
     }
 
     timer->endTime = time(NULL);
-    timer->stopLocalTime = localtime(&timer->endTime);
 
     if(!timer->paused) {
         loadElapsedTime(timer);
@@ -149,16 +146,21 @@ void initTimer(TimerP timer)
     timer->elapsedSeconds = 0;
 }
 
-void loadCurrentLocalTime(char * string, int length) {
-    time_t currentTime;
-    currentTime = time(NULL);
-    loadProvidedLocalTime(currentTime, string, length);
-}
-
-void loadProvidedLocalTime(time_t time, char * string, int length) {
+void loadProvidedLocalTime(time_t time, char * string, int length)
+{
     struct tm *localTime;
     localTime = localtime(&time);
     strftime(string, length, "%I:%M:%S%P", localTime);
+}
+
+void loadStartLocalTime(TimerP timer, char * string, int length)
+{
+    loadProvidedLocalTime(timer->startTime, string, length);
+}
+
+void loadStopLocalTime(TimerP timer, char * string, int length)
+{
+    loadProvidedLocalTime(timer->endTime, string, length);
 }
 
 void loadElapsedTime(TimerP timer)
