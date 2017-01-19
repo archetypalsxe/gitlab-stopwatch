@@ -35,6 +35,7 @@ typedef struct Timer {
     int elapsedSeconds;
 }*TimerP;
 
+
 // Public function prototypes
 /**
  * Returns whether or not the timer is stopped
@@ -63,6 +64,14 @@ void debug(TimerP);
  * and also sets a notification
  */
 void initTimer(TimerP);
+/**
+ * Load the current local time into the provided string
+ */
+void loadCurrentLocalTime(char*, int);
+/**
+ * Load the provided local time into the provided string
+ */
+void loadProvidedLocalTime(time_t, char*, int);
 /**
  * Pause the timer so it is no longer running but able to be easily resumed
  */

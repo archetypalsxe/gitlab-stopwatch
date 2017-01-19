@@ -3,10 +3,6 @@
 // Private function prototypes
 
 /**
- * Returns a formatted string of the current time
- */
-const gchar *getCurrentTime();
-/**
  * Alerts the user that the timer has not been running. Sets up a followup
  * alert based on the provided number of microseconds
  */
@@ -35,18 +31,6 @@ void loadElapsedTime(TimerP);
  * have elapsed to be formatted
  */
 void setElapsedTime(int, TimerP);
-
-const gchar *getCurrentTime() {
-    time_t currentTime;
-    struct tm *localTime;
-    gchar *buffer[256];
-
-    currentTime = time(NULL);
-    localTime = localtime(&currentTime);
-    strftime(*buffer, 256, "%I:%M:%S%P", localTime);
-    return *buffer;
-}
-
 
 gboolean alertUser(TimerP timer) {
     if(!timer->stopped && !timer->paused) {
@@ -163,6 +147,18 @@ void initTimer(TimerP timer)
         timer
     );
     timer->elapsedSeconds = 0;
+}
+
+void loadCurrentLocalTime(char * string, int length) {
+    time_t currentTime;
+    currentTime = time(NULL);
+    loadProvidedLocalTime(currentTime, string, length);
+}
+
+void loadProvidedLocalTime(time_t time, char * string, int length) {
+    struct tm *localTime;
+    localTime = localtime(&time);
+    strftime(string, length, "%I:%M:%S%P", localTime);
 }
 
 void loadElapsedTime(TimerP timer)

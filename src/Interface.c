@@ -35,9 +35,7 @@ void stopTimerPressed(GtkWidget*, InterfacePointer);
  * Called once the user has entered what they are working on so we can update
  * that row in the display
  */
-void updateStartTime(
-    const gchar*, InterfacePointer
-);
+void updateStartTime(const gchar*, InterfacePointer);
 
 GtkWidget* createGrid() {
     GtkWidget *grid = gtk_grid_new();
