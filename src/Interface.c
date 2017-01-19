@@ -203,8 +203,10 @@ void lapButtonPressed (GtkWidget *widget, InterfacePointer interface)
 
 void pauseButtonPressed (GtkWidget *widget, InterfacePointer interface)
 {
+    TimerP timer = interface->timerPointer;
+
     // Timer isn't running, pause button shouldn't be visible
-    if (!interface->timerPointer->running) {
+    if (isStopped(timer)) {
         gtk_widget_hide(interface->pauseButton);
     }
 
@@ -213,7 +215,6 @@ void pauseButtonPressed (GtkWidget *widget, InterfacePointer interface)
 
         gtk_widget_hide(interface->lapButton);
 
-        TimerP timer = interface->timerPointer;
         gchar buffer[256];
         strftime(buffer, 256, "%I:%M:%S%P", timer->stopLocalTime);
         GtkWidget *windowTime;

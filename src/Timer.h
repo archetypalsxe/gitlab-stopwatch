@@ -16,15 +16,9 @@
 /**
  * The "class" that has all the data for the timer itself and handles all
  * the user interaction
- *
- * @TODO Make this just deal with the timer itself and not anything to do
- * with the UI (shouldn't have subject and stuff)
  */
 typedef struct Timer {
-    /**
-     * @TODO This should eventually be changed to isStopped or stopped
-     */
-    gboolean running;
+    gboolean stopped;
     gboolean paused;
     struct tm *startLocalTime;
     struct tm *stopLocalTime;
@@ -42,6 +36,10 @@ typedef struct Timer {
 }*TimerP;
 
 // Public function prototypes
+/**
+ * Returns whether or not the timer is stopped
+ */
+gboolean isStopped(TimerP);
 /**
  * Start the timer. Returns whether the starting was successful or not
  */

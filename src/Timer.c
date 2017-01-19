@@ -1,6 +1,7 @@
 #include "Timer.h"
 
 // Private function prototypes
+
 /**
  * Returns a formatted string of the current time
  */
@@ -48,7 +49,7 @@ const gchar *getCurrentTime() {
 
 
 gboolean alertUser(TimerP timer) {
-    if(timer->running && !timer->paused) {
+    if(!timer->stopped && !timer->paused) {
         return FALSE;
     }
     NotifyNotification *notification;
@@ -61,6 +62,11 @@ gboolean alertUser(TimerP timer) {
     return TRUE;
 }
 
+gboolean isStopped(TimerP timer)
+{
+    return timer->stopped;
+}
+
 gboolean startTimer(TimerP timer) {
     return timerStarted(timer);
 }
@@ -71,7 +77,7 @@ gboolean stopTimer(TimerP timer) {
 
 gboolean timerStarted (TimerP timer)
 {
-    if(timer->running && !timer->paused) {
+    if(!timer->stopped && !timer->paused) {
         return FALSE;
     }
 
@@ -82,7 +88,7 @@ gboolean timerStarted (TimerP timer)
         timer->elapsedSeconds = 0;
     }
 
-    timer->running = TRUE;
+    timer->stopped = FALSE;
     timer->paused = FALSE;
 
     timer->startLocalTime = localtime(&timer->startTime);
@@ -95,7 +101,7 @@ gboolean timerStarted (TimerP timer)
 
 gboolean timerStopped (TimerP timer, gboolean paused)
 {
-    if(!timer->running) {
+    if(timer->stopped) {
         return FALSE;
     }
 
@@ -109,7 +115,7 @@ gboolean timerStopped (TimerP timer, gboolean paused)
     timer->paused = paused;
 
     if(!paused) {
-        timer->running = FALSE;
+        timer->stopped = TRUE;
     }
 
 
@@ -134,7 +140,7 @@ void debug(TimerP timer)
 {
     printf("***Debugging***\n");
     printf("%p\n", timer);
-    printf("Running: %d\n", timer->running);
+    printf("Stopped: %d\n", timer->stopped);
 
     char buff[20];
     printf("Start Time: %s", ctime(&(timer->startTime)));
@@ -149,7 +155,7 @@ void debug(TimerP timer)
 
 void initTimer(TimerP timer)
 {
-    timer->running = FALSE;
+    timer->stopped = TRUE;
     timer->alertFrequency = ALERT_FREQUENCY;
     timer->timeoutIdentifier = g_timeout_add(
         timer->alertFrequency,
