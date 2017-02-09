@@ -1,6 +1,7 @@
 #include "Interface.h"
 
 // Private function prototypes
+
 /**
  * Returns a newly created grid that we will use for display purposes within
  * the window
@@ -167,33 +168,28 @@ void initializeObjects()
  */
 void lapButtonPressed (GtkWidget *widget, InterfacePointer interface)
 {
-    gchar eventTimeString[256];
+    gchar buffer[256];
     gchar *currentElapsed;
-    time_t currentTime;
-
+    GtkWidget *windowTime, *windowAction, *windowElapsed;
     TimerP timer = interface->timerPointer;
+
     currentElapsed = getElapsedTime(timer);
 
-    GtkWidget *windowTime;
-    GtkWidget *windowAction;
-    GtkWidget *windowElapsed;
-    GtkWidget *grid = interface->grid;
-    GtkWidget *window = interface->window;
+    // @TODO Get rid of this
+    timer->startTime = time(NULL);
 
-    timer->startTime = currentTime = time(NULL);
-    strftime(eventTimeString, 256, "%I:%M:%S%P", localtime(&currentTime));
-    windowTime = gtk_label_new(eventTimeString);
+    loadCurrentLocalTime(buffer, 256);
+    windowTime = gtk_label_new(buffer);
 
-    gchar actionString[256];
-    sprintf(actionString, "Displaying Time (%s)", timer->subject);
-    windowAction = gtk_label_new(actionString);
+    sprintf(buffer, "Displaying Time (%s)", timer->subject);
+    windowAction = gtk_label_new(buffer);
 
     windowElapsed = gtk_label_new(currentElapsed);
-    gtk_grid_remove_row(GTK_GRID(grid), 3);
-    gtk_grid_insert_row(GTK_GRID(grid), 0);
-    gtk_grid_attach(GTK_GRID(grid), windowTime, 0, 0, 1, 1);
-    gtk_grid_attach(GTK_GRID(grid), windowAction, 1, 0, 1, 1);
-    gtk_grid_attach(GTK_GRID(grid), windowElapsed, 2, 0, 1, 1);
+    gtk_grid_remove_row(GTK_GRID(interface->grid), 3);
+    gtk_grid_insert_row(GTK_GRID(interface->grid), 0);
+    gtk_grid_attach(GTK_GRID(interface->grid), windowTime, 0, 0, 1, 1);
+    gtk_grid_attach(GTK_GRID(interface->grid), windowAction, 1, 0, 1, 1);
+    gtk_grid_attach(GTK_GRID(interface->grid), windowElapsed, 2, 0, 1, 1);
     gtk_widget_show(windowTime);
     gtk_widget_show(windowAction);
     gtk_widget_show(windowElapsed);

@@ -1,7 +1,11 @@
 TODO's
+    Fix elapsed time
+        Elapsed time should only be changed when stopping or pausing
+        Should be cleared when starting
     Move Display Time/Lap Button to timer
-Generic "button pressed" function
+Simplify everything
 Make read me file better
+Generic "button pressed" function
 Ability to turn On/Off notifications from GUI
 Add additional lines in log
     Or scroll bar

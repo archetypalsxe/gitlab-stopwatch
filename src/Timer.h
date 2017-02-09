@@ -9,8 +9,13 @@
 #include <gtk/gtk.h>
 #include <stdlib.h>
 
-// 300,000 is 5 minutes
-#define ALERT_FREQUENCY 300000;
+/**
+ * Frequency is in seconds
+ */
+#define ALERT_FREQUENCY 180;
+/**
+ * Is in milliseconds
+ */
 #define ALERT_TIMEOUT 8000;
 
 /**
@@ -34,7 +39,13 @@ typedef struct Timer {
 }*TimerP;
 
 
-// Public function prototypes
+/**
+ *          PUBLIC FUNCTION PROTOTYPES
+ */
+/**
+ * Returns whether or not the timer is paused
+ */
+gboolean isPaused(TimerP);
 /**
  * Returns whether or not the timer is stopped
  */
@@ -62,6 +73,10 @@ void debug(TimerP);
  * and also sets a notification
  */
 void initTimer(TimerP);
+/**
+ * Load the current local time into the provided string
+ */
+void loadCurrentLocalTime(char*, int);
 /**
  * Load the provided local time into the provided string
  */

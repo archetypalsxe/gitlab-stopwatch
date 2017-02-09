@@ -1,6 +1,8 @@
 #include "Timer.h"
 
-// Private function prototypes
+/**
+ *              PRIVATE FUNCTION PROTOTYPES
+ */
 
 /**
  * Alerts the user that the timer has not been running. Sets up a followup
@@ -39,11 +41,18 @@ gboolean alertUser(TimerP timer) {
     NotifyNotification *notification;
     notify_init("Basic");
 
-    notification = notify_notification_new("Timer is not running", NULL, NULL);
+    notification = notify_notification_new(
+        "Timer is not running", NULL, NULL
+    );
     int alertTimeout = ALERT_TIMEOUT;
     notify_notification_set_timeout (notification, alertTimeout);
     notify_notification_show (notification, NULL);
     return TRUE;
+}
+
+gboolean isPaused(TimerP timer)
+{
+    return timer->paused;
 }
 
 gboolean isStopped(TimerP timer)
@@ -101,7 +110,7 @@ gboolean timerStopped (TimerP timer, gboolean paused)
 
 
     /* Set up notification for every 5 minutes (300000) */
-    timer->timeoutIdentifier = g_timeout_add(
+    timer->timeoutIdentifier = g_timeout_add_seconds(
         timer->alertFrequency,
         (GSourceFunc)alertUser,
         timer
@@ -138,12 +147,17 @@ void initTimer(TimerP timer)
 {
     timer->stopped = TRUE;
     timer->alertFrequency = ALERT_FREQUENCY;
-    timer->timeoutIdentifier = g_timeout_add(
+    timer->timeoutIdentifier = g_timeout_add_seconds(
         timer->alertFrequency,
         (GSourceFunc)alertUser,
         timer
     );
     timer->elapsedSeconds = 0;
+}
+
+void loadCurrentLocalTime(char * string, int length)
+{
+    loadProvidedLocalTime(time(NULL), string, length);
 }
 
 void loadProvidedLocalTime(time_t time, char * string, int length)
@@ -163,6 +177,9 @@ void loadStopLocalTime(TimerP timer, char * string, int length)
     loadProvidedLocalTime(timer->endTime, string, length);
 }
 
+/**
+ * @TODO Need to better handle elapsed time
+ */
 void loadElapsedTime(TimerP timer)
 {
     sprintf(timer->elapsedTime, "");
