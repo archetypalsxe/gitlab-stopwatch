@@ -169,14 +169,11 @@ void initializeObjects()
 void lapButtonPressed (GtkWidget *widget, InterfacePointer interface)
 {
     gchar buffer[256];
-    gchar *currentElapsed;
+    gchar currentElapsed[256];
     GtkWidget *windowTime, *windowAction, *windowElapsed;
     TimerP timer = interface->timerPointer;
 
-    currentElapsed = getElapsedTime(timer);
-
-    // @TODO Get rid of this
-    timer->startTime = time(NULL);
+    loadCurrentElapsedTime(currentElapsed, timer);
 
     loadCurrentLocalTime(buffer, 256);
     windowTime = gtk_label_new(buffer);

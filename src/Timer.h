@@ -59,10 +59,6 @@ gboolean startTimer(TimerP);
  */
 gboolean stopTimer(TimerP);
 /**
- * Returns the current time that has elapsed
- */
-gchar *getElapsedTime(TimerP);
-/**
  * Used for outputting debugging information to the console
  *
  * @TODO This should be able to be initiated in the calling parameters
@@ -77,6 +73,11 @@ void initTimer(TimerP);
  * Load the current local time into the provided string
  */
 void loadCurrentLocalTime(char*, int);
+/**
+ * Loads the time that has elapsed into the provided string. Overloads
+ * protected function of same name
+ */
+void loadCurrentElapsedTime(char*, TimerP);
 /**
  * Load the provided local time into the provided string
  */

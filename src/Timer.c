@@ -29,10 +29,10 @@ gboolean timerStopped(TimerP, gboolean);
  */
 void loadElapsedTime(TimerP);
 /**
- * Sets the elapsed time string.  Takes in the number of seconds that
- * have elapsed to be formatted
+ * Takes in the number of seconds that have elapsed to be formatted and
+ * put into the provided string
  */
-void setElapsedTime(int, TimerP);
+void setElapsedTime(int, char*);
 
 gboolean alertUser(TimerP timer) {
     if(!timer->stopped && !timer->paused) {
@@ -119,13 +119,6 @@ gboolean timerStopped (TimerP timer, gboolean paused)
     return TRUE;
 }
 
-
-gchar * getElapsedTime(TimerP timer)
-{
-    loadElapsedTime(timer);
-    return timer->elapsedTime;
-}
-
 void debug(TimerP timer)
 {
     printf("***Debugging***\n");
@@ -160,6 +153,14 @@ void loadCurrentLocalTime(char * string, int length)
     loadProvidedLocalTime(time(NULL), string, length);
 }
 
+void loadCurrentElapsedTime(char* string, TimerP timer)
+{
+    int elapsedTime =
+        timer->elapsedSeconds +
+        (int)difftime(time(NULL), timer->startTime);
+    setElapsedTime(elapsedTime, string);
+}
+
 void loadProvidedLocalTime(time_t time, char * string, int length)
 {
     struct tm *localTime;
@@ -182,13 +183,13 @@ void loadStopLocalTime(TimerP timer, char * string, int length)
  */
 void loadElapsedTime(TimerP timer)
 {
-    sprintf(timer->elapsedTime, "");
     int elapsedTime =
         timer->elapsedSeconds +
         (int)difftime(time(NULL), timer->startTime);
 
+    // @TODO Remove this?
     timer->elapsedSeconds = elapsedTime;
-    setElapsedTime(elapsedTime, timer);
+    setElapsedTime(elapsedTime, timer->elapsedTime);
 }
 
 void pauseTimer(TimerP timer)
@@ -201,8 +202,9 @@ void resumeTimer(TimerP timer)
     timerStarted(timer);
 }
 
-void setElapsedTime(int seconds, TimerP timer)
+void setElapsedTime(int seconds, char *string)
 {
+    sprintf(string, "");
     int numDays = seconds / 60 / 60 / 24;
     seconds -= numDays * 60 * 60 * 24;
     int numHours = seconds / 60 / 60;
@@ -212,35 +214,35 @@ void setElapsedTime(int seconds, TimerP timer)
     int numSeconds = seconds;
 
     if(numDays > 0) {
-        sprintf(timer->elapsedTime, "%d days", numDays);
+        sprintf(string, "%d days", numDays);
     }
 
     if(numHours > 0) {
-        if(strnlen(timer->elapsedTime, sizeof(timer->elapsedTime)) > 0) {
-            sprintf(timer->elapsedTime, "%s %d hours", timer->elapsedTime, numHours);
+        if(strnlen(string, sizeof(string)) > 0) {
+            sprintf(string, "%s %d hours", string, numHours);
         } else {
-            sprintf(timer->elapsedTime, "%d hours", numHours);
+            sprintf(string, "%d hours", numHours);
         }
     }
 
     if(numMinutes > 0) {
-        if(strnlen(timer->elapsedTime, sizeof(timer->elapsedTime)) > 0) {
-            sprintf(timer->elapsedTime, "%s %d minutes", timer->elapsedTime, numMinutes);
+        if(strnlen(string, sizeof(string)) > 0) {
+            sprintf(string, "%s %d minutes", string, numMinutes);
         } else {
-            sprintf(timer->elapsedTime, "%d minutes", numMinutes);
+            sprintf(string, "%d minutes", numMinutes);
         }
     }
 
     if(numSeconds > 0) {
-        if(strnlen(timer->elapsedTime, sizeof(timer->elapsedTime)) > 0) {
-            sprintf(timer->elapsedTime, "%s %d seconds", timer->elapsedTime, numSeconds);
+        if(strnlen(string, sizeof(string)) > 0) {
+            sprintf(string, "%s %d seconds", string, numSeconds);
         } else {
-            sprintf(timer->elapsedTime, "%d seconds", numSeconds);
+            sprintf(string, "%d seconds", numSeconds);
         }
     }
 
-    if(strnlen(timer->elapsedTime, sizeof(timer->elapsedTime)) == 0) {
-        sprintf(timer->elapsedTime, "%d seconds", 0);
+    if(strnlen(string, sizeof(string)) == 0) {
+        sprintf(string, "%d seconds", 0);
     }
 }
 

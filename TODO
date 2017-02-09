@@ -1,5 +1,5 @@
 TODO's
-    Fix elapsed time
+    Fix elapsed time - MIGHT BE RESOLVED, BUT SHOULD DOUBLE CHECK
         Elapsed time should only be changed when stopping or pausing
         Should be cleared when starting
     Move Display Time/Lap Button to timer
